@@ -96,8 +96,14 @@ body { background: var(--bg); color: var(--fg); font: 14px/1.45 var(--font-body)
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .hint { color: var(--muted); font-size: 12px; margin: 0; }
 .collapse-btn { display: inline-block; }
-#left.collapsed .more { display: none; }
-#right.collapsed .tabbody { display: none; }
+#left.off, #right.off, .fab.off { display: none; }
+.fab {
+  position: absolute; z-index: 5; top: calc(env(safe-area-inset-top, 0px) + 16px);
+  background: var(--panel); border: 1px solid var(--edge); border-radius: 14px; box-shadow: var(--shadow);
+  padding: 9px 16px; font: 600 13px var(--font-body); color: var(--fg); cursor: pointer;
+}
+#fabLeft { left: max(16px, env(safe-area-inset-left, 0px)); }
+#fabRight { right: max(16px, env(safe-area-inset-right, 0px)); }
 
 .swatches { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
 .swatch { appearance: none; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--panel-solid); box-shadow: 0 0 0 1px var(--line); cursor: pointer; padding: 0; }
@@ -186,7 +192,11 @@ tr.total td { font-weight: 600; border-bottom: 0; }
 @media (max-width: 1100px) {
   #left { right: max(16px, env(safe-area-inset-right, 0px)); width: auto; padding: 12px; gap: 10px; max-height: 46%; }
   #right { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); left: max(16px, env(safe-area-inset-left, 0px)); width: auto; max-height: 44%; }
+  .dim { font-size: 10px; padding: 1px 4px; }
+  .seclabel { font-size: 10.5px; padding: 3px 6px; }
+  .seclabel span { display: none; }
   #compareBar, #installBar { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 150px); }
+  #app.leftoff #compareBar, #app.leftoff #installBar { top: calc(env(safe-area-inset-top, 0px) + 66px); }
   .brand h1 { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -195,6 +205,8 @@ tr.total td { font-weight: 600; border-bottom: 0; }
 <div id="app">
   <div id="stage"></div>
   <div id="labels"></div>
+  <button class="fab" id="fabLeft" aria-expanded="false">เมนู</button>
+  <button class="fab" id="fabRight" aria-expanded="false">ข้อมูล</button>
 
   <aside id="left" class="panel" aria-label="ตัวควบคุมโมเดล">
     <div class="brand">
@@ -492,9 +504,8 @@ const COLORS = [
 ];
 // Black and near-black are not allowed: every channel below ~28 % reads as black on a roof.
 const tooDark = hex => { const c = new THREE.Color(hex); return Math.max(c.r, c.g, c.b) < 0.075; }; // linear ≈ 0.30 sRGB
-const DEFAULT_COLOR = COLORS[8];  // opening colour: light grey (brown stays the colour in the supplier quote)
+const DEFAULT_COLOR = COLORS[8];  // opening colour on every device: light grey (brown stays the colour in the supplier quote)
 const roof = { hex: DEFAULT_COLOR[1], name: DEFAULT_COLOR[0] };
-try { const s = JSON.parse(localStorage.getItem('roofColor') || 'null'); if (s && /^#[0-9a-f]{6}$/i.test(s.hex) && !tooDark(s.hex)) Object.assign(roof, s); } catch (e) {}
 const presetName = COLORS.find(c => c[1] === roof.hex); if (presetName) roof.name = presetName[0];
 const sheetLight = () => { const c = new THREE.Color(roof.hex); return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b > 0.3; };
 function applyRoofColor() {
@@ -1403,7 +1414,7 @@ function buildDims(F, out) {
   });
   // total run of the back slope (B + C) along the near edge, beside the section labels
   const sB = F.S.B, lenBC = P.lenB + P.lenC, xt = -W / 2 - 0.75;
-  D.add(dimLine(F.pt(sB, 0, xt, 0.3), F.pt(sB, lenBC, xt, 0.3), sB.n, `รวม ${fm(lenBC)} ม.  (${fm(P.lenB)} + ${fm(P.lenC)})`, 'dim acc'));
+  D.add(dimLine(F.pt(sB, 0, xt, 0.3), F.pt(sB, lenBC, xt, 0.3), sB.n, `รวม ${fm(lenBC)} ม.${innerWidth <= 1100 ? '' : `  (${fm(P.lenB)} + ${fm(P.lenC)})`}`, 'dim acc'));
   // widths at both eaves
   const a1 = F.pt(F.S.A, P.lenA + 0.45, -W / 2, 0), a2 = F.pt(F.S.A, P.lenA + 0.45, W / 2, 0);
   D.add(dimLine(a1, a2, new V3(0, 0, 1), `กว้าง ${fm(W)} ม.`));
@@ -1786,12 +1797,16 @@ const VIEWS = {
   front: [new V3(2.5, 6.5, 30), new V3(0, 4.2, 2.6)],
   back: [new V3(-4, 10, -24), new V3(0, 3.6, 0)],
   side: [new V3(26, 5.0, 2.6), new V3(0, 3.8, 2.6)],
+  isoTall: [new V3(-12.8, 36.7, 27.2), new V3(-0.3, 5.5, 2.2)],  // same view for portrait phones and tablets
   laps: [new V3(4.0, 8.2, -0.2), new V3(1.3, 6.3, 2.0)],
 };
 let tween = null;
 function goView(name) {
-  const [p, t] = VIEWS[name];
-  const narrow = innerWidth < 820 ? 1.75 : innerWidth <= 1100 ? 1.3 : 1;
+  const aspect = innerWidth / innerHeight, tall = aspect < 1;
+  // the opening view is framed for a landscape tablet (about 1.45:1). A portrait screen gets its own
+  // framing with the roof running up the screen; other views back off so they still fit the width
+  const [p, t] = name === 'iso' && tall ? VIEWS.isoTall : VIEWS[name];
+  const narrow = name === 'iso' && tall ? 1 : aspect < 1.45 ? Math.min(3.2, 1.45 / aspect) : 1;
   const tp = t.clone().add(p.clone().sub(t).multiplyScalar(narrow));
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce) { camera.position.copy(tp); controls.target.copy(t); return; }
@@ -1849,10 +1864,20 @@ renderer.domElement.addEventListener('pointerup', e => {
 /* ------------------------------ UI wiring ------------------------------ */
 let toastT = 0;
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 3200); }
+// show or hide a side panel; its corner button stands in while it is hidden
+function setPanel(side, open) {
+  const cap = side === 'left' ? 'Left' : 'Right';
+  $(`#${side}`).classList.toggle('off', !open);
+  $(`#fab${cap}`).classList.toggle('off', open);
+  $(`#fab${cap}`).setAttribute('aria-expanded', String(open));
+  $(`#${side === 'left' ? 'leftToggle' : 'rightToggle'}`).setAttribute('aria-expanded', String(open));
+  $('#app').classList.toggle('leftoff', $('#left').classList.contains('off'));
+}
 document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
   state.mode = b.dataset.mode;
   document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
   applyVisibility();
+  if (innerWidth <= 1100) setPanel('left', false);  // small screens: clear the way for the slider that appears
 }));
 ['lyLaps', 'lyWalls', 'lyNeighbours', 'lyStructure', 'lyFlash', 'lyDims', 'lyNumbers', 'lyCut'].forEach(id => $(`#${id}`).addEventListener('change', () => {
   if (id === 'lyCut' && layer('lyCut')) goView('side');
@@ -1879,7 +1904,6 @@ $('#btnPlay').addEventListener('click', () => {
 function setRoofColor(hex, name) {
   if (tooDark(hex)) { toast('ไม่อนุญาตให้ใช้สีดำกับหลังคา กรุณาเลือกสีที่อ่อนกว่านี้'); return false; }
   roof.hex = hex; roof.name = name;
-  try { localStorage.setItem('roofColor', JSON.stringify(roof)); } catch (e) {}
   applyRoofColor(); syncSwatches(); renderTabs(); invalidate();
   return true;
 }
@@ -1895,14 +1919,13 @@ syncSwatches();
 document.querySelectorAll('.tabs [role="tab"]').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.tabs [role="tab"]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
   ['sections', 'sheets', 'cost', 'compare', 'settings'].forEach(t => { $(`#tab-${t}`).hidden = t !== b.dataset.tab; });
-  $('#right').classList.remove('collapsed'); $('#rightToggle').textContent = 'ซ่อน';
 }));
-$('#rightToggle').addEventListener('click', () => { const c = $('#right').classList.toggle('collapsed'); $('#rightToggle').textContent = c ? 'แสดง' : 'ซ่อน'; $('#rightToggle').setAttribute('aria-expanded', String(!c)); });
-const setLeft = c => { $('#left').classList.toggle('collapsed', c); $('#leftToggle').textContent = c ? 'ตัวเลือก' : 'ซ่อน'; $('#leftToggle').setAttribute('aria-expanded', String(!c)); };
-$('#leftToggle').addEventListener('click', () => setLeft(!$('#left').classList.contains('collapsed')));
-// opening view: both side panels folded away so the 3D roof fills the screen
-setLeft(true);
-$('#right').classList.add('collapsed'); $('#rightToggle').textContent = 'แสดง'; $('#rightToggle').setAttribute('aria-expanded', 'false');
+$('#rightToggle').addEventListener('click', () => setPanel('right', false));
+$('#leftToggle').addEventListener('click', () => setPanel('left', false));
+$('#fabRight').addEventListener('click', () => setPanel('right', true));
+$('#fabLeft').addEventListener('click', () => setPanel('left', true));
+// opening view: both panels hidden so the 3D roof fills the screen on every device
+setPanel('left', false); setPanel('right', false);
 $('#btnMeasure').addEventListener('click', () => {
   state.measuring = !state.measuring;
   $('#btnMeasure').setAttribute('aria-pressed', String(state.measuring));
@@ -1939,7 +1962,7 @@ buildContext();
 rebuild();
 syncTheme();
 const [p0, t0] = VIEWS.iso; camera.position.copy(p0); controls.target.copy(t0);
-if (innerWidth <= 1100) goView('iso');
+if (innerWidth / innerHeight < 1.45) goView('iso');
 
 function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
