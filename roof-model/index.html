@@ -1,0 +1,1967 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body>
+<title>วางแผนหลังคาบ้านริมคลอง</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: full-bleed 3D stage (scale-model on warm beige) with floating frosted-glass panels:
+   controls on the left, measurements / sheets / settings on the right, compare slider at the bottom. */
+:root {
+  --bg: #e7dfd3;
+  --bg-2: #f3eee6;
+  --ground: #ddd3c4;
+  --panel: rgba(252, 249, 244, 0.96);
+  --lap: #f2b01e;         /* overlap highlight */
+  --panel-solid: #fbf8f3;
+  --edge: rgba(255, 255, 255, 0.75);
+  --line: rgba(64, 50, 38, 0.13);
+  --fg: #2b2520;
+  --muted: #74685c;
+  --accent: #8a4a2b;      /* new metal sheet brown */
+  --accent-soft: rgba(138, 74, 43, 0.12);
+  --steel: #5f7280;       /* galvanized steel */
+  --steel-soft: rgba(95, 114, 128, 0.14);
+  --ok: #2d7a57;
+  --warn: #a8661a;
+  --shadow: 0 10px 40px rgba(70, 52, 36, 0.16), 0 1px 0 rgba(255,255,255,0.6) inset;
+  --font-display: "Archivo", "IBM Plex Sans Thai", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "IBM Plex Sans Thai", "Leelawadee UI", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "IBM Plex Sans Thai", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1f1b18; --bg-2: #2a2520; --ground: #2b2622;
+    --panel: rgba(36, 31, 27, 0.96); --panel-solid: #2a2420; --edge: rgba(255, 240, 225, 0.08);
+    --line: rgba(255, 236, 214, 0.12); --fg: #f0e8dd; --muted: #ab9f92;
+    --accent: #d68c5e; --accent-soft: rgba(214, 140, 94, 0.16);
+    --steel: #9db1bf; --steel-soft: rgba(157, 177, 191, 0.16);
+    --ok: #63c193; --warn: #e2a24e;
+    --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1f1b18; --bg-2: #2a2520; --ground: #2b2622;
+  --panel: rgba(36, 31, 27, 0.96); --panel-solid: #2a2420; --edge: rgba(255, 240, 225, 0.08);
+  --line: rgba(255, 236, 214, 0.12); --fg: #f0e8dd; --muted: #ab9f92;
+  --accent: #d68c5e; --accent-soft: rgba(214, 140, 94, 0.16);
+  --steel: #9db1bf; --steel-soft: rgba(157, 177, 191, 0.16);
+  --ok: #63c193; --warn: #e2a24e;
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.45 var(--font-body); overflow: hidden; }
+#app { position: relative; height: 100%; overflow: hidden; }
+#stage { position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 35%, var(--bg-2), var(--bg) 70%); }
+#stage canvas { display: block; touch-action: none; }
+#labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+
+.panel {
+  position: absolute; z-index: 5;
+  background: var(--panel);
+  border: 1px solid var(--edge); border-radius: 18px; box-shadow: var(--shadow);
+}
+#left {
+  top: calc(env(safe-area-inset-top, 0px) + 16px); left: max(16px, env(safe-area-inset-left, 0px));
+  width: 270px; max-height: calc(100% - 32px - env(safe-area-inset-top, 0px)); overflow: auto;
+  padding: 16px; display: flex; flex-direction: column; gap: 14px;
+}
+#right {
+  top: calc(env(safe-area-inset-top, 0px) + 16px); right: max(16px, env(safe-area-inset-right, 0px));
+  width: 420px; max-height: calc(100% - 32px - env(safe-area-inset-top, 0px));
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.brand { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.brand h1 { font: 700 19px/1.15 var(--font-display); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+.brand p { margin: 4px 0 0; color: var(--muted); font-size: 12.5px; }
+.eyebrow { font: 500 11px/1.2 var(--font-mono); letter-spacing: 0.02em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.seg { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--line); border-radius: 12px; padding: 3px; gap: 3px; }
+.seg button { appearance: none; border: 0; border-radius: 9px; padding: 8px 4px; font: 600 12.5px var(--font-body); color: var(--fg); background: transparent; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--panel-solid); box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+.seg button[data-mode="old"][aria-pressed="true"] { color: var(--steel); }
+.seg button[data-mode="new"][aria-pressed="true"] { color: var(--accent); }
+.layers { display: grid; gap: 2px; }
+.layers label { display: flex; align-items: center; gap: 9px; padding: 5px 6px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+.layers label:hover { background: var(--line); }
+.layers input { accent-color: var(--accent); width: 15px; height: 15px; margin: 0; }
+.layers small { margin-left: auto; color: var(--muted); font: 11px var(--font-mono); }
+.btnrow { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn {
+  appearance: none; border: 1px solid var(--line); background: var(--panel-solid); color: var(--fg);
+  border-radius: 10px; padding: 7px 11px; font: 500 12.5px var(--font-body); cursor: pointer;
+}
+.btn:hover { border-color: var(--muted); }
+.btn[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: transparent; }
+.btn:disabled { opacity: 0.5; cursor: default; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hint { color: var(--muted); font-size: 12px; margin: 0; }
+.collapse-btn { display: none; }
+
+.swatches { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+.swatch { appearance: none; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--panel-solid); box-shadow: 0 0 0 1px var(--line); cursor: pointer; padding: 0; }
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--fg); }
+.swatch.custom { position: relative; overflow: hidden; background: conic-gradient(#b8432f, #d4a03a, #6b8f3a, #2f6f8f, #7d4a8f, #b8432f); }
+.swatch.custom input { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); opacity: 0; cursor: pointer; padding: 0; border: 0; }
+.colorname { font-size: 12px; color: var(--muted); margin: 7px 0 0; }
+.plan { width: 100%; height: auto; display: block; margin: 8px 0 2px; }
+.plan .sh { stroke: var(--fg); stroke-width: 0.9; }
+.plan .lapz { fill: var(--lap); fill-opacity: 0.7; }
+.plan .purlin { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 3; }
+.plan .edge { stroke: var(--fg); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+.plan .dl { stroke: var(--accent); stroke-width: 1; }
+.plan text { font: 500 9.5px var(--font-mono); fill: var(--fg); }
+.plan text.acc { fill: var(--accent); font-weight: 600; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--muted); }
+.legend i { display: inline-block; width: 14px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.formula { font: 11px/1.6 var(--font-mono); background: var(--line); border-radius: 8px; padding: 8px 10px; margin: 6px 0 0; white-space: pre-wrap; }
+.tabs { display: flex; gap: 2px; padding: 10px 10px 0; border-bottom: 1px solid var(--line); flex: none; align-items: flex-end; overflow-x: auto; overflow-y: hidden; }
+.tabs button {
+  appearance: none; border: 0; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap;
+  font: 600 12.5px var(--font-body); padding: 8px 8px 9px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.tabs .spacer { flex: 1; }
+.tabbody { overflow: auto; padding: 14px 16px 18px; min-height: 0; }
+.tabbody h2 { font: 700 15px/1.2 var(--font-display); margin: 0 0 4px; }
+.tabbody h3 { font: 600 13px/1.2 var(--font-body); margin: 16px 0 6px; }
+.lead { color: var(--muted); font-size: 12.5px; margin: 0 0 12px; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.tbl-wrap { overflow-x: auto; }
+th, td { text-align: right; padding: 6px 4px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font: 500 11px var(--font-mono); letter-spacing: 0.01em; text-transform: uppercase; color: var(--muted); }
+td { font: 12px var(--font-mono); }
+td.name { font: 600 12.5px var(--font-body); }
+tr.total td { font-weight: 600; border-bottom: 0; }
+.key { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; font: 700 11px var(--font-mono); color: #fff; background: var(--accent); margin-right: 6px; }
+.chip { display: inline-block; padding: 2px 7px; border-radius: 999px; font: 500 10.5px var(--font-mono); letter-spacing: 0.02em; background: var(--line); color: var(--muted); vertical-align: middle; }
+.chip.ok { background: rgba(45, 122, 87, 0.14); color: var(--ok); }
+.chip.warn { background: rgba(168, 102, 26, 0.15); color: var(--warn); }
+.chip.scan { background: var(--steel-soft); color: var(--steel); }
+.chip.you { background: var(--accent-soft); color: var(--accent); }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 12.5px; }
+.kv span:nth-child(even) { font-family: var(--font-mono); text-align: right; }
+.card { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; background: color-mix(in srgb, var(--panel-solid) 55%, transparent); }
+.card .row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.card .big { font: 600 18px var(--font-mono); }
+.card .sub { color: var(--muted); font-size: 12px; }
+.note { border-left: 3px solid var(--warn); padding: 6px 10px; background: rgba(168, 102, 26, 0.08); border-radius: 0 8px 8px 0; font-size: 12.5px; margin: 8px 0; }
+.form { display: grid; grid-template-columns: 1fr 96px; gap: 7px 10px; align-items: center; }
+.form label { font-size: 12.5px; }
+.form input { width: 100%; box-sizing: border-box; font: 13px var(--font-mono); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-solid); color: var(--fg); text-align: right; }
+.form .sec { grid-column: 1 / -1; font: 500 11px var(--font-mono); letter-spacing: 0.02em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+
+#installBar .ends { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 12.5px; margin-bottom: 4px; }
+#installBar input { width: 100%; accent-color: var(--accent); }
+#compareBar, #installBar {
+  left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  width: min(460px, calc(100% - 32px)); padding: 10px 16px 12px; box-sizing: border-box;
+}
+#compareBar .ends { display: flex; justify-content: space-between; font: 600 12px var(--font-body); margin-bottom: 4px; }
+#compareBar .ends span:first-child { color: var(--steel); }
+#compareBar .ends span:last-child { color: var(--accent); }
+#compareBar input { width: 100%; accent-color: var(--accent); }
+
+#tip {
+  position: absolute; z-index: 8; pointer-events: none; padding: 7px 10px; border-radius: 10px;
+  background: var(--panel-solid); border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 12px; white-space: nowrap;
+}
+#tip b { font-family: var(--font-mono); }
+#toast {
+  position: absolute; z-index: 9; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 18px); transform: translateX(-50%);
+  background: var(--fg); color: var(--bg); padding: 8px 14px; border-radius: 999px; font-size: 12.5px; max-width: calc(100% - 32px);
+}
+
+/* 3D labels */
+.dim { font: 500 11.5px var(--font-mono); color: var(--fg); background: var(--panel-solid); border: 1px solid var(--line); padding: 2px 6px; border-radius: 6px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.dim.acc { color: #fff; background: var(--accent); border-color: transparent; }
+.dim.lapl { color: #2b2520; background: var(--lap); border-color: transparent; }
+.seclabel { font: 700 12px var(--font-display); color: #fff; background: rgba(43, 37, 32, 0.78); padding: 4px 8px; border-radius: 8px; white-space: nowrap; }
+.seclabel span { font: 400 11px var(--font-mono); opacity: 0.85; margin-left: 6px; }
+.sheetno { font: 600 10px var(--font-mono); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.7); white-space: nowrap; }
+.measure { font: 600 12px var(--font-mono); color: #fff; background: #1d6fb8; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+
+@media (max-width: 820px) {
+  #left { right: max(16px, env(safe-area-inset-right, 0px)); width: auto; padding: 12px; gap: 10px; max-height: 46%; }
+  #left.collapsed .more { display: none; }
+  .collapse-btn { display: inline-block; }
+  #right { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); left: max(16px, env(safe-area-inset-left, 0px)); width: auto; max-height: 44%; }
+  #right.collapsed .tabbody { display: none; }
+  #compareBar, #installBar { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 150px); }
+  .brand h1 { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div id="app">
+  <div id="stage"></div>
+  <div id="labels"></div>
+
+  <aside id="left" class="panel" aria-label="ตัวควบคุมโมเดล">
+    <div class="brand">
+      <div>
+        <h1>วางแผนหลังคาบ้านริมคลอง</h1>
+        <p>หลังคาสังกะสีเดิม เทียบกับเมทัลชีทใหม่</p>
+      </div>
+      <button class="btn collapse-btn" id="leftToggle" aria-expanded="false">ชั้นข้อมูล</button>
+    </div>
+    <div>
+      <div class="eyebrow">แสดงหลังคา</div>
+      <div class="seg" role="group" aria-label="แสดงหลังคา">
+        <button data-mode="old" aria-pressed="false">เดิม</button>
+        <button data-mode="new" aria-pressed="true">ใหม่</button>
+        <button data-mode="compare" aria-pressed="false">เทียบ</button>
+        <button data-mode="install" aria-pressed="false">ติดตั้ง</button>
+      </div>
+    </div>
+    <div class="more">
+      <div class="eyebrow">สีหลังคาใหม่</div>
+      <div class="swatches" id="swatches" role="group" aria-label="สีหลังคาใหม่"></div>
+      <p class="colorname" id="colorName">น้ำตาล (ตามใบเสนอราคา)</p>
+    </div>
+    <div class="more">
+      <div class="eyebrow">ชั้นข้อมูล</div>
+      <div class="layers">
+        <label><input type="checkbox" id="lyLaps" checked> ขอบแผ่นและส่วนทับซ้อน</label>
+        <label><input type="checkbox" id="lyWalls" checked> ผนังและพื้น</label>
+        <label><input type="checkbox" id="lyNeighbours"> บ้านข้างเคียง</label>
+        <label><input type="checkbox" id="lyStructure" checked> จันทันและแป</label>
+        <label><input type="checkbox" id="lyFlash" checked> ครอบและสกรู</label>
+        <label><input type="checkbox" id="lyDims" checked> ขนาด</label>
+        <label><input type="checkbox" id="lyNumbers"> หมายเลขแผ่น</label>
+        <label><input type="checkbox" id="lyCut"> ผ่าดูกลางบ้าน</label>
+        <label><input type="checkbox" id="lyScan"> สแกน 3 มิติ (บ้านจริง) <small id="scanState">17 MB</small></label>
+      </div>
+    </div>
+    <div class="more">
+      <div class="eyebrow">มุมมอง</div>
+      <div class="btnrow">
+        <button class="btn" data-view="iso">3 มิติ</button>
+        <button class="btn" data-view="top">ด้านบน</button>
+        <button class="btn" data-view="front">ด้านหน้า</button>
+        <button class="btn" data-view="back">ด้านหลัง</button>
+        <button class="btn" data-view="side">ด้านข้าง</button>
+        <button class="btn" data-view="laps">ซูมรอยทับซ้อน</button>
+      </div>
+    </div>
+    <div class="more">
+      <div class="eyebrow">เครื่องมือ</div>
+      <div class="btnrow">
+        <button class="btn" id="btnMeasure" aria-pressed="false">วัดระยะ</button>
+        <button class="btn" id="btnExport">ส่งออก GLB</button>
+      </div>
+      <p class="hint" id="toolHint" style="margin-top:8px">ลากเพื่อหมุน เลื่อนล้อเมาส์หรือถ่างนิ้วเพื่อซูม คลิกขวาค้างแล้วลากเพื่อเลื่อน ชี้ที่แผ่นใหม่เพื่อดูขนาด</p>
+    </div>
+  </aside>
+
+  <section id="right" class="panel" aria-label="ข้อมูลการวัด">
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="sections" aria-selected="true">ส่วนหลังคา</button>
+      <button role="tab" data-tab="sheets" aria-selected="false">แผ่น</button>
+      <button role="tab" data-tab="cost" aria-selected="false">ราคา</button>
+      <button role="tab" data-tab="compare" aria-selected="false">เดิม/ใหม่</button>
+      <button role="tab" data-tab="settings" aria-selected="false">ตั้งค่า</button>
+      <span class="spacer"></span>
+      <button class="collapse-btn btn" id="rightToggle" aria-expanded="true" style="margin:0 0 6px">ซ่อน</button>
+    </div>
+    <div class="tabbody" id="tab-sections"></div>
+    <div class="tabbody" id="tab-sheets" hidden></div>
+    <div class="tabbody" id="tab-cost" hidden></div>
+    <div class="tabbody" id="tab-compare" hidden></div>
+    <div class="tabbody" id="tab-settings" hidden></div>
+  </section>
+
+  <div id="compareBar" class="panel" hidden>
+    <div class="ends"><span>◀ เดิม (สังกะสี)</span><span>ใหม่ (เมทัลชีท) ▶</span></div>
+    <input type="range" id="splitRange" min="-2" max="2" step="0.01" value="0" aria-label="ตำแหน่งเส้นแบ่งเปรียบเทียบ">
+  </div>
+  <div id="installBar" class="panel" hidden>
+    <div class="ends"><span id="installText">มุงครบทุกแผ่น</span><button class="btn" id="btnPlay">เล่น</button></div>
+    <input type="range" id="installRange" min="0" max="60" step="1" value="60" aria-label="จำนวนแผ่นที่มุงแล้ว">
+  </div>
+  <div id="tip" hidden></div>
+  <div id="toast" hidden></div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+
+/* ------------------------------------------------------------------
+   Fixed house geometry, measured from the LiDAR scan (metres).
+   Axes: x = across the house (4 m), y = up from the ground floor,
+   z = along the house, +z toward the canal (front).
+------------------------------------------------------------------- */
+const FRONT_WALL = 9.05;   // outer face, 2nd-floor front wall
+const BACK_WALL = -4.15;   // outer face, rear wall under the back eave
+const INNER_WALL = -0.5;   // wall between the hall and the rear space
+const MID_WALL = 4.15;     // wall between the hall and the upstairs front room
+const FLOOR2 = 3.48, FLOOR2_UNDER = 3.33, CEIL2 = 5.83;
+const ANCHOR = { z: -0.5, y: 4.954 };  // roof underside on top of the interior wall (scan)
+const BACKBLOCK_END = -10.25;
+const CANAL_EDGE = 10.25;
+
+const DEFAULTS = {
+  width: 4.0, pitch: 20.3, pitchF: 20.3,
+  lenA: 3.15, lenB: 7.0, lenC: 4.5,
+  sheetW: 0.75, effW: 0.65, effL: 1.50, stockL: 1.60,
+  sheetLenA: 3.15, sheetLenB: 1.60, sheetLenC: 1.60,
+  spares: 2, price: 235, purlinMax: 0.80,
+};
+const P = { ...DEFAULTS };
+const SEC_NAMES = { A: 'หน้า', B: 'กลาง', C: 'หลัง' };
+const QUOTE = { A: { n: 8, len: 3.15 }, B: null, C: { n: 20, len: 1.60 } };
+
+const rad = d => d * Math.PI / 180;
+const V3 = THREE.Vector3;
+const $ = s => document.querySelector(s);
+const fm = (v, d = 2) => (Math.round(v * 10 ** d) / 10 ** d).toFixed(d);
+const thb = v => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(v);
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
+
+/* ------------------------------ renderer ------------------------------ */
+const stage = $('#stage');
+// No shadows, no environment reflections: two plain lights and matte materials keep the
+// roof easy to read and cheap to draw. Frames are drawn only when something changes.
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.setSize(stage.clientWidth, stage.clientHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.localClippingEnabled = true;
+stage.appendChild(renderer.domElement);
+
+const labelRenderer = new CSS2DRenderer({ element: $('#labels') });
+labelRenderer.setSize(stage.clientWidth, stage.clientHeight);
+
+let dirty = true;
+const invalidate = () => { dirty = true; };
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(34, stage.clientWidth / stage.clientHeight, 0.2, 400);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.maxPolarAngle = Math.PI * 0.495;
+controls.minDistance = 2; controls.maxDistance = 120;
+controls.addEventListener('change', invalidate);
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0xcdbfa9, 1.5));
+const sun = new THREE.DirectionalLight(0xfff4e6, 1.5);
+sun.position.set(10, 24, 14);
+scene.add(sun);
+const mat = o => { const { roughness, metalness, ...rest } = o; return new THREE.MeshLambertMaterial(rest); };
+
+/* ------------------------------ textures ------------------------------ */
+function canvasTex(w, h, draw, srgb = true) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
+  return t;
+}
+function noise(g, w, h, amt, seed, alpha = 0.06) {
+  const r = rng(seed);
+  for (let i = 0; i < w * h * amt; i++) {
+    g.fillStyle = r() < 0.5 ? `rgba(0,0,0,${alpha})` : `rgba(255,255,255,${alpha})`;
+    g.fillRect(r() * w, r() * h, 1 + r() * 2, 1 + r() * 2);
+  }
+}
+// 1 texture unit = 1 m. Horizontal clapboard every 15 cm.
+function siding(base, lineCol, seed) {
+  return canvasTex(256, 256, (g, w, h) => {
+    g.fillStyle = base; g.fillRect(0, 0, w, h);
+    const r = rng(seed); const step = h / 6.6667;
+    for (let y = 0; y < h; y += step) {
+      g.fillStyle = `rgba(0,0,0,${0.03 + r() * 0.05})`; g.fillRect(0, y, w, step);
+      g.fillStyle = lineCol; g.fillRect(0, y + step - 3, w, 3);
+      g.fillStyle = 'rgba(255,255,255,0.10)'; g.fillRect(0, y, w, 1);
+    }
+    noise(g, w, h, 0.25, seed + 1, 0.05);
+  });
+}
+const tex = {
+  white: siding('#ece8e1', 'rgba(90,80,70,0.28)', 3),
+  wood: siding('#6f5038', 'rgba(25,15,8,0.45)', 5),
+  green: siding('#cfdccd', 'rgba(70,90,70,0.25)', 7),
+  party: siding('#e4ddd2', 'rgba(110,95,80,0.22)', 9),
+  concrete: canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#b9b3aa'; g.fillRect(0, 0, w, h); noise(g, w, h, 1.4, 11, 0.07); }),
+  deck: canvasTex(256, 256, (g, w, h) => {
+    const r = rng(13); for (let x = 0; x < w; x += 32) { g.fillStyle = `hsl(28, 22%, ${34 + r() * 10}%)`; g.fillRect(x, 0, 30, h); g.fillStyle = 'rgba(0,0,0,0.4)'; g.fillRect(x + 30, 0, 2, h); }
+    noise(g, w, h, 0.4, 14, 0.06);
+  }),
+  fret: canvasTex(256, 64, (g, w, h) => {
+    g.clearRect(0, 0, w, h); g.strokeStyle = '#3b2e25'; g.lineWidth = 5;
+    g.strokeRect(2, 2, w - 4, h - 4);
+    for (let x = 0; x < w; x += 64) { g.beginPath(); g.moveTo(x, h / 2); g.lineTo(x + 32, 4); g.lineTo(x + 64, h / 2); g.lineTo(x + 32, h - 4); g.closePath(); g.stroke(); g.beginPath(); g.moveTo(x + 32, 4); g.lineTo(x + 32, h - 4); g.stroke(); }
+  }),
+  louvre: canvasTex(64, 64, (g, w, h) => { g.fillStyle = '#2d3135'; g.fillRect(0, 0, w, h); for (let y = 4; y < h; y += 8) { g.fillStyle = '#9fb2bb'; g.fillRect(4, y, w - 8, 4); } g.strokeStyle = '#6a4a35'; g.lineWidth = 6; g.strokeRect(0, 0, w, h); }),
+  grille: canvasTex(128, 256, (g, w, h) => {
+    g.fillStyle = '#4a3527'; g.fillRect(0, 0, w, h); g.strokeStyle = '#d9d2c4'; g.lineWidth = 4; g.strokeRect(6, 6, w - 12, h - 12);
+    g.lineWidth = 2.5; for (let y = 30; y < h - 20; y += 48) { g.beginPath(); g.arc(w / 2, y, 14, 0, Math.PI * 2); g.stroke(); g.beginPath(); g.moveTo(w / 2, y + 14); g.lineTo(w / 2, y + 34); g.stroke(); }
+    g.beginPath(); g.moveTo(w / 2, 6); g.lineTo(w / 2, h - 6); g.stroke();
+  }),
+  door: canvasTex(64, 128, (g, w, h) => { g.fillStyle = '#efece6'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(0,0,0,0.25)'; g.lineWidth = 3; [[8, 8, 48, 40], [8, 56, 48, 28], [8, 92, 48, 28]].forEach(r => g.strokeRect(...r)); }),
+  water: canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#5f6b5c'; g.fillRect(0, 0, w, h); const r = rng(21); for (let i = 0; i < 260; i++) { g.fillStyle = `rgba(255,255,255,${0.04 + r() * 0.06})`; g.fillRect(r() * w, r() * h, 10 + r() * 30, 1.5); } }),
+  fibre: canvasTex(128, 256, (g, w, h) => { g.fillStyle = '#9a9890'; g.fillRect(0, 0, w, h); noise(g, w, h, 1.2, 23, 0.08); const r = rng(24); for (let i = 0; i < 18; i++) { g.fillStyle = `rgba(40,40,30,${0.08 + r() * 0.1})`; g.fillRect(r() * w, r() * h, 3 + r() * 20, 10 + r() * 60); } }),
+};
+// galvanized corrugated variants (u across 0.66 m, v along sheet)
+function galv(kind, seed) {
+  return canvasTex(256, 512, (g, w, h) => {
+    const r = rng(seed);
+    if (kind === 'rust') { g.fillStyle = '#7b4a31'; g.fillRect(0, 0, w, h); }
+    else if (kind === 'new') { g.fillStyle = '#d3d8dc'; g.fillRect(0, 0, w, h); }
+    else { g.fillStyle = '#a9aeb1'; g.fillRect(0, 0, w, h); }
+    noise(g, w, h, 1.2, seed + 1, kind === 'new' ? 0.04 : 0.08);
+    const blots = kind === 'new' ? 2 : kind === 'rust' ? 30 : 14;
+    for (let i = 0; i < blots; i++) {
+      const x = r() * w, y = r() * h, rr = 8 + r() * 40;
+      const grd = g.createRadialGradient(x, y, 1, x, y, rr);
+      const c = kind === 'rust' ? (r() < 0.5 ? '96,52,30' : '150,95,60') : '125,70,40';
+      grd.addColorStop(0, `rgba(${c},0.75)`); grd.addColorStop(1, `rgba(${c},0)`);
+      g.fillStyle = grd; g.fillRect(x - rr, y - rr, rr * 2, rr * 2);
+    }
+    for (let i = 0; i < (kind === 'new' ? 0 : 26); i++) { // run-off streaks along the sheet
+      const x = r() * w, len = 60 + r() * 260, y = r() * h;
+      g.fillStyle = kind === 'rust' ? `rgba(60,30,18,${0.2 + r() * 0.3})` : `rgba(140,78,40,${0.25 + r() * 0.35})`;
+      g.fillRect(x, y, 2 + r() * 5, len);
+    }
+    if (kind === 'rust') for (let i = 0; i < 6; i++) { g.fillStyle = 'rgba(235,235,230,0.65)'; g.fillRect(r() * w, r() * h, 6 + r() * 16, 4 + r() * 10); } // sealant dabs
+  });
+}
+
+/* ------------------------------ materials ------------------------------ */
+const M = {
+  white: mat({ map: tex.white, roughness: 0.85, side: THREE.DoubleSide }),
+  wood: mat({ map: tex.wood, roughness: 0.8, side: THREE.DoubleSide }),
+  green: mat({ map: tex.green, roughness: 0.85, side: THREE.DoubleSide }),
+  party: mat({ map: tex.party, roughness: 0.9, side: THREE.DoubleSide }),
+  timber: mat({ color: 0x6b4a33, roughness: 0.75 }),
+  timberLight: mat({ color: 0x9a7552, roughness: 0.75 }),
+  concrete: mat({ map: tex.concrete, roughness: 0.95 }),
+  deck: mat({ map: tex.deck, roughness: 0.85 }),
+  fret: mat({ map: tex.fret, transparent: true, alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.8 }),
+  dark: mat({ color: 0x241d18, roughness: 0.9, side: THREE.DoubleSide }),
+  glass: mat({ color: 0x2b3438, roughness: 0.15, metalness: 0.3 }),
+  frame: mat({ color: 0xf0ede6, roughness: 0.6 }),
+  louvre: mat({ map: tex.louvre, roughness: 0.6 }),
+  grille: mat({ map: tex.grille, roughness: 0.7 }),
+  door: mat({ map: tex.door, roughness: 0.7 }),
+  ac: mat({ color: 0xf2f2ee, roughness: 0.5 }),
+  board: mat({ color: 0x3a302b, roughness: 0.9 }),
+  neighbour: mat({ color: 0xf3efe8, roughness: 0.95, side: THREE.DoubleSide }),
+  ground: mat({ color: 0xddd3c4, roughness: 1 }),
+  water: mat({ map: tex.water, color: 0xb6c4b8, roughness: 0.18, metalness: 0.1, transparent: true, opacity: 0.92 }),
+  fibre: mat({ map: tex.fibre, roughness: 0.9, side: THREE.DoubleSide }),
+  oldBack: mat({ color: 0xffffff, roughness: 0.45, metalness: 0.5, side: THREE.DoubleSide }),
+  // existing roof: galvanized corrugated steel
+  galvRust: mat({ map: galv('rust', 31), roughness: 0.75, metalness: 0.35, side: THREE.DoubleSide }),
+  galvMixed: mat({ map: galv('mixed', 41), roughness: 0.55, metalness: 0.6, side: THREE.DoubleSide }),
+  galvNew: mat({ map: galv('new', 51), roughness: 0.35, metalness: 0.8, side: THREE.DoubleSide }),
+  galvCap: mat({ color: 0x7e5a44, roughness: 0.7, metalness: 0.4, side: THREE.DoubleSide }),
+  // new roof: brown pre-painted metal sheet, 0.40 mm, PU foam 1" with silver foil underside
+  sheet: mat({ color: 0x6e3f27, roughness: 0.42, metalness: 0.35, side: THREE.DoubleSide }),
+  foam: mat({ color: 0xffffff, vertexColors: true, roughness: 0.35, metalness: 0.75, side: THREE.DoubleSide }),
+  flash: mat({ color: 0x5f3520, roughness: 0.42, metalness: 0.35, side: THREE.DoubleSide }),
+  screw: mat({ color: 0x4d2a18, roughness: 0.4, metalness: 0.5 }),
+  epdm: mat({ color: 0x1c1917, roughness: 0.9, metalness: 0.05 }),
+  closure: mat({ color: 0x26282b, roughness: 0.9, side: THREE.DoubleSide }),
+  purlin: mat({ color: 0x939da6, roughness: 0.45, metalness: 0.6, side: THREE.DoubleSide }),
+  divider: new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false }),
+  // overlap zones (10 cm side and end laps) and sheet outlines
+  lap: new THREE.MeshBasicMaterial({ color: 0xf2b01e, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false }),
+  outline: new THREE.LineBasicMaterial({ color: 0xfff1dc, transparent: true, opacity: 0.85 }),
+};
+const OLD_MATS = [M.galvRust, M.galvMixed, M.galvNew, M.galvCap];
+const NEW_MATS = [M.sheet, M.foam, M.flash, M.screw, M.epdm, M.closure, M.lap, M.outline];
+const HOUSE_MATS = Object.values(M).filter(m => !OLD_MATS.includes(m) && !NEW_MATS.includes(m) && m !== M.divider && m !== M.ground && m !== M.water);
+
+/* ------------------------------ roof colour ------------------------------ */
+const COLORS = [
+  ['น้ำตาล', '#6e3f27'], ['แดงอิฐ', '#8e2f24'], ['ส้มดินเผา', '#b0532f'], ['เขียวเข้ม', '#3f5e3b'],
+  ['น้ำเงินกรมท่า', '#2c4a74'], ['เทาหินชนวน', '#6f767c'], ['เงินซิงค์', '#b9bec2'], ['ครีม', '#e4dccb'],
+];
+// Black and near-black are not allowed: every channel below ~28 % reads as black on a roof.
+const tooDark = hex => { const c = new THREE.Color(hex); return Math.max(c.r, c.g, c.b) < 0.075; }; // linear ≈ 0.30 sRGB
+const roof = { hex: COLORS[0][1], name: COLORS[0][0] };
+try { const s = JSON.parse(localStorage.getItem('roofColor') || 'null'); if (s && /^#[0-9a-f]{6}$/i.test(s.hex) && !tooDark(s.hex)) Object.assign(roof, s); } catch (e) {}
+const presetName = COLORS.find(c => c[1] === roof.hex); if (presetName) roof.name = presetName[0];
+const sheetLight = () => { const c = new THREE.Color(roof.hex); return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b > 0.3; };
+function applyRoofColor() {
+  M.sheet.color.set(roof.hex);
+  M.flash.color.set(roof.hex).multiplyScalar(0.72);
+  M.screw.color.set(roof.hex).multiplyScalar(0.82);
+  M.outline.color.set(sheetLight() ? 0x2b2520 : 0xfff1dc);
+}
+applyRoofColor();
+
+/* ------------------------------ geometry helpers ------------------------------ */
+const UNIT_BOX = new THREE.BoxGeometry(1, 1, 1).translate(0.5, 0.5, 0.5);
+const X_AXIS = new V3(1, 0, 0);
+
+// Matrix for local geometry: x across (world +x), y along the surface normal, z along the slope.
+// The origin is the end with the smaller world z, so the normal always points up.
+function slopeMatrix(a, b, sx, sy) {
+  let s = a, e = b;
+  if (e.z < s.z) { s = b; e = a; }
+  const Z = e.clone().sub(s); const L = Z.length(); Z.divideScalar(L);
+  const N = new V3(0, Z.z, -Z.y);
+  const m = new THREE.Matrix4().makeBasis(X_AXIS, N, Z);
+  m.scale(new V3(sx, sy, L));
+  m.setPosition(s);
+  return m;
+}
+function boxMatrix(x0, x1, y0, y1, z0, z1) {
+  return new THREE.Matrix4().makeScale(x1 - x0, y1 - y0, z1 - z0).setPosition(x0, y0, z0);
+}
+// Collect many boxes that share a material into one InstancedMesh.
+class Batch {
+  constructor() { this.m = []; }
+  add(mat4) { this.m.push(mat4); return this; }
+  box(...a) { return this.add(boxMatrix(...a)); }
+  build(material, geo = UNIT_BOX) {
+    const im = new THREE.InstancedMesh(geo, material, Math.max(1, this.m.length));
+    this.m.forEach((m, i) => im.setMatrixAt(i, m));
+    im.count = this.m.length; im.castShadow = im.receiveShadow = true;
+    im.computeBoundingSphere();
+    return im;
+  }
+}
+// Extrude a profile (array of [x,y]) along z from 0 to 1.
+// Duplicate consecutive vertices produce hard edges; distinct vertices average normals smoothly.
+function profileGeometry(profile, smooth) {
+  const nP = profile.length, w = profile[nP - 1][0];
+  const segNx = new Float32Array(nP - 1), segNy = new Float32Array(nP - 1), valid = new Uint8Array(nP - 1);
+  let hasDup = false;
+  for (let i = 0; i < nP - 1; i++) {
+    const dx = profile[i + 1][0] - profile[i][0], dy = profile[i + 1][1] - profile[i][1], l = Math.hypot(dx, dy);
+    if (l > 1e-7) { segNx[i] = -dy / l; segNy[i] = dx / l; valid[i] = 1; } else hasDup = true;
+  }
+  const pos = [], nor = [], uv = [], idx = [];
+  if (smooth || hasDup) {
+    const vnx = new Float32Array(nP), vny = new Float32Array(nP);
+    for (let i = 0; i < nP; i++) {
+      let nx = 0, ny = 0;
+      if (i > 0 && valid[i - 1]) { nx += segNx[i - 1]; ny += segNy[i - 1]; }
+      if (i < nP - 1 && valid[i]) { nx += segNx[i]; ny += segNy[i]; }
+      const l = Math.hypot(nx, ny) || 1;
+      vnx[i] = nx / l; vny[i] = ny / l;
+    }
+    const t = smooth ? 0 : 0.0014; // 0.40 mm pre-painted steel skin thickness
+    for (let i = 0; i < nP; i++) {
+      const [x, y] = profile[i];
+      pos.push(x, y + t, 0, x, y + t, 1);
+      nor.push(vnx[i], vny[i], 0, vnx[i], vny[i], 0);
+      uv.push(x / w, 0, x / w, 1);
+    }
+    for (let i = 0; i < nP - 1; i++) if (valid[i]) {
+      const a = 2 * i, b = a + 1, c = a + 2, d = a + 3;
+      idx.push(a, b, d, a, d, c);
+    }
+    if (t > 0) {
+      const bOff = pos.length / 3;
+      for (let i = 0; i < nP; i++) {
+        const [x, y] = profile[i];
+        pos.push(x, y, 0, x, y, 1);
+        nor.push(-vnx[i], -vny[i], 0, -vnx[i], -vny[i], 0);
+        uv.push(x / w, 0, x / w, 1);
+      }
+      for (let i = 0; i < nP - 1; i++) if (valid[i]) {
+        const a = bOff + 2 * i, b = a + 1, c = a + 2, d = a + 3;
+        idx.push(a, d, b, a, c, d);
+      }
+      for (let end = 0; end < 2; end++) {
+        const nz = end ? 1 : -1, eOff = pos.length / 3;
+        for (let i = 0; i < nP; i++) {
+          const [x, y] = profile[i];
+          pos.push(x, y, end, x, y + t, end);
+          nor.push(0, 0, nz, 0, 0, nz);
+          uv.push(x / w, end, x / w, end);
+        }
+        for (let i = 0; i < nP - 1; i++) if (valid[i]) {
+          const a = eOff + 2 * i, b = a + 1, c = a + 2, d = a + 3;
+          if (end) idx.push(a, d, b, a, c, d); else idx.push(a, b, d, a, d, c);
+        }
+      }
+      [[0, -1], [nP - 1, 1]].forEach(([i, nx]) => {
+        const [x, y] = profile[i], sOff = pos.length / 3;
+        pos.push(x, y, 0, x, y, 1, x, y + t, 0, x, y + t, 1);
+        for (let k = 0; k < 4; k++) nor.push(nx, 0, 0);
+        uv.push(0, 0, 0, 1, 1, 0, 1, 1);
+        if (nx > 0) idx.push(sOff, sOff + 1, sOff + 3, sOff, sOff + 3, sOff + 2);
+        else idx.push(sOff, sOff + 3, sOff + 1, sOff, sOff + 2, sOff + 3);
+      });
+    }
+  } else {
+    for (let i = 0; i < nP - 1; i++) if (valid[i]) {
+      const [px, py] = profile[i], [qx, qy] = profile[i + 1], o = pos.length / 3;
+      pos.push(px, py, 0, px, py, 1, qx, qy, 0, qx, qy, 1);
+      for (let k = 0; k < 4; k++) nor.push(segNx[i], segNy[i], 0);
+      uv.push(px / w, 0, px / w, 1, qx / w, 0, qx / w, 1);
+      idx.push(o, o + 1, o + 3, o, o + 3, o + 2);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  return g;
+}
+// T-ONE 760 trapezoidal profile: 5 ribs, 28 mm high, chamfered/rounded corners,
+// flank + top stiffening grooves, 3 low micro-ribs in each pan, capillary groove near underlap.
+// First and last rib are exactly one cover width (effW) apart so adjacent sheets nest rib-over-rib.
+const RIB_H = 0.028;
+const ribCenters = () => [0, 1, 2, 3, 4].map(i => 0.025 + i * P.effW / 4);
+function trapProfile() {
+  const p = [], R = ribCenters();
+  const hp = (x, y) => p.push([x, y], [x, y]), sp = (x, y) => p.push([x, y]);
+  sp(0, 0.0012); hp(0.0012, 0);
+  R.forEach((c, i) => {
+    if (i > 0) {
+      const panA = R[i - 1] + 0.0235, panB = c - 0.0235, panW = panB - panA;
+      if (panW > 0.024) {
+        const mw = Math.min(0.0085, panW * 0.105), mh = 0.0032;
+        [0.22, 0.50, 0.78].forEach(f => {
+          const m = panA + panW * f;
+          hp(m - mw, 0);
+          sp(m - mw * 0.76, mh * 0.28); sp(m - mw * 0.55, mh * 0.76);
+          hp(m - mw * 0.35, mh); hp(m + mw * 0.35, mh);
+          sp(m + mw * 0.55, mh * 0.76); sp(m + mw * 0.76, mh * 0.28);
+          hp(m + mw, 0);
+        });
+      }
+    }
+    // Bottom-left smooth fillet into left rib flank
+    hp(c - 0.0235, 0); sp(c - 0.0218, 0.0005); sp(c - 0.0203, 0.0019); hp(c - 0.0190, 0.0040);
+    // Left flank with roll-formed stiffening groove
+    hp(c - 0.0158, 0.0115); hp(c - 0.0136, 0.0128); hp(c - 0.0126, 0.0155); hp(c - 0.0140, 0.0172);
+    // Top-left chamfered/rounded corner
+    hp(c - 0.0110, RIB_H - 0.0024); sp(c - 0.0098, RIB_H - 0.0007); hp(c - 0.0084, RIB_H);
+    // Rib top crest with shoulder stiffening beads and flat center for screw washer
+    hp(c - 0.0060, RIB_H); sp(c - 0.0050, RIB_H - 0.0009); hp(c - 0.0038, RIB_H);
+    hp(c + 0.0038, RIB_H); sp(c + 0.0050, RIB_H - 0.0009); hp(c + 0.0060, RIB_H);
+    // Top-right chamfered/rounded corner
+    hp(c + 0.0084, RIB_H); sp(c + 0.0098, RIB_H - 0.0007); hp(c + 0.0110, RIB_H - 0.0024);
+    // Right flank with roll-formed stiffening groove
+    hp(c + 0.0140, 0.0172); hp(c + 0.0126, 0.0155); hp(c + 0.0136, 0.0128); hp(c + 0.0158, 0.0115);
+    // Bottom-right smooth fillet back to pan floor
+    hp(c + 0.0190, 0.0040); sp(c + 0.0203, 0.0019); sp(c + 0.0218, 0.0005); hp(c + 0.0235, 0);
+  });
+  // Underlap tail with anti-capillary double water-stop groove and upturned drip hem
+  const u0 = R[4] + 0.0235, rem = P.sheetW - u0;
+  if (rem > 0.020) {
+    const cg = u0 + rem * 0.52, cw = Math.min(0.014, rem * 0.34);
+    hp(cg - cw, 0); sp(cg - cw * 0.72, 0.0018); sp(cg - cw * 0.42, 0.0042);
+    sp(cg, 0.0006);
+    sp(cg + cw * 0.42, 0.0042); sp(cg + cw * 0.72, 0.0018); hp(cg + cw, 0);
+    hp(P.sheetW - 0.0022, 0); sp(P.sheetW, 0.0022);
+  } else if (rem > 0.002) sp(P.sheetW, 0);
+  return p;
+}
+// 25 mm PU foam (profiled on top to match sheet, flat underneath) + silver foil underside layer.
+function foamGeometry(profile) {
+  const pts = [profile[0]];
+  for (let i = 1; i < profile.length; i++) if (Math.hypot(profile[i][0] - pts[pts.length - 1][0], profile[i][1] - pts[pts.length - 1][1]) > 1e-7) pts.push(profile[i]);
+  const n = pts.length, w = pts[n - 1][0], yMid = -0.0235, yBot = -0.0252;
+  const cFoamA = new THREE.Color(0xedd9a3), cFoamB = new THREE.Color(0xdfc688);
+  const cFoilA = new THREE.Color(0xd5dae2), cFoilB = new THREE.Color(0xbec5cf), cFoilRim = new THREE.Color(0xe5e9ef);
+  const pos = [], nor = [], uv = [], col = [], idx = [];
+  const pushV = (x, y, z, nx, ny, nz, u, v, c) => { pos.push(x, y, z); nor.push(nx, ny, nz); uv.push(u, v); col.push(c.r, c.g, c.b); };
+  const addQuad = (p0, p1, p2, p3, nx, ny, nz, c0, c1 = c0) => {
+    const o = pos.length / 3;
+    pushV(p0[0], p0[1], p0[2], nx, ny, nz, 0, 0, c0); pushV(p1[0], p1[1], p1[2], nx, ny, nz, 0, 1, c0);
+    pushV(p2[0], p2[1], p2[2], nx, ny, nz, 1, 0, c1); pushV(p3[0], p3[1], p3[2], nx, ny, nz, 1, 1, c1);
+    idx.push(o, o + 1, o + 3, o, o + 3, o + 2);
+  };
+  // Top profiled PU foam surface + cut-end (z=0) and eave-end (z=1) profiled PU foam walls
+  for (let i = 0; i < n - 1; i++) {
+    const [x0, y0] = pts[i], [x1, y1] = pts[i + 1], dx = x1 - x0, dy = y1 - y0, l = Math.hypot(dx, dy) || 1;
+    addQuad([x0, y0, 0], [x0, y0, 1], [x1, y1, 0], [x1, y1, 1], -dy / l, dx / l, 0, cFoamA, cFoamB);
+    addQuad([x0, yMid, 0], [x0, y0, 0], [x1, yMid, 0], [x1, y1, 0], 0, 0, -1, cFoamB, cFoamA);
+    addQuad([x1, yMid, 1], [x1, y0, 1], [x0, yMid, 1], [x0, y1, 1], 0, 0, 1, cFoamB, cFoamA);
+  }
+  // PU foam side walls + internal longitudinal webs (so mid-roof cross-section cut shows solid PU foam)
+  addQuad([0, yMid, 1], [0, pts[0][1], 1], [0, yMid, 0], [0, pts[0][1], 0], -1, 0, 0, cFoamB, cFoamA);
+  addQuad([w, yMid, 0], [w, pts[n - 1][1], 0], [w, yMid, 1], [w, pts[n - 1][1], 1], 1, 0, 0, cFoamB, cFoamA);
+  for (let k = 1; k < 10; k++) {
+    const wi = Math.floor(n * k / 10), [wx, wy] = pts[wi];
+    addQuad([wx, yMid, 1], [wx, wy, 1], [wx, yMid, 0], [wx, wy, 0], -1, 0, 0, cFoamB, cFoamA);
+  }
+  // Silver foil perimeter layered edge rims (at cut end z=0, eave z=1, and sides x=0, x=w)
+  addQuad([0, yBot, 0], [0, yMid, 0], [w, yBot, 0], [w, yMid, 0], 0, 0, -1, cFoilRim);
+  addQuad([w, yBot, 1], [w, yMid, 1], [0, yBot, 1], [0, yMid, 1], 0, 0, 1, cFoilRim);
+  addQuad([0, yBot, 1], [0, yMid, 1], [0, yBot, 0], [0, yMid, 0], -1, 0, 0, cFoilRim);
+  addQuad([w, yBot, 0], [w, yMid, 0], [w, yBot, 1], [w, yMid, 1], 1, 0, 0, cFoilRim);
+  // Flat silver foil underside with subtle longitudinal foil seam shading
+  const nS = 16;
+  for (let i = 0; i < nS; i++) {
+    const x0 = w * i / nS, x1 = w * (i + 1) / nS, c0 = i % 2 ? cFoilA : cFoilB, c1 = i % 2 ? cFoilB : cFoilA;
+    addQuad([x0, yBot, 1], [x0, yBot, 0], [x1, yBot, 1], [x1, yBot, 0], 0, -1, 0, c0, c1);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  return g;
+}
+// Profiled closed-cell foam closure strip matching trapProfile() under ridge cap and at eaves.
+function closureGeometry(profile) {
+  const pts = [profile[0]];
+  for (let i = 1; i < profile.length; i++) if (Math.hypot(profile[i][0] - pts[pts.length - 1][0], profile[i][1] - pts[pts.length - 1][1]) > 1e-7) pts.push(profile[i]);
+  const n = pts.length, w = pts[n - 1][0], yTop = RIB_H + 0.0032, tSkin = 0.0014;
+  const pos = [], nor = [], uv = [], idx = [];
+  const addQ = (p0, p1, p2, p3, nx, ny, nz) => {
+    const o = pos.length / 3;
+    pos.push(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], p3[0], p3[1], p3[2]);
+    for (let k = 0; k < 4; k++) nor.push(nx, ny, nz);
+    uv.push(0, 0, 0, 1, 1, 0, 1, 1);
+    idx.push(o, o + 1, o + 3, o, o + 3, o + 2);
+  };
+  for (let i = 0; i < n - 1; i++) {
+    const [x0, py0] = pts[i], [x1, py1] = pts[i + 1], y0 = py0 + tSkin, y1 = py1 + tSkin;
+    const dx = x1 - x0, dy = y1 - y0, l = Math.hypot(dx, dy) || 1;
+    addQ([x0, yTop, 0], [x0, yTop, 1], [x1, yTop, 0], [x1, yTop, 1], 0, 1, 0);
+    addQ([x0, y0, 1], [x0, y0, 0], [x1, y1, 1], [x1, y1, 0], dy / l, -dx / l, 0);
+    addQ([x0, y0, 0], [x0, yTop, 0], [x1, y1, 0], [x1, yTop, 0], 0, 0, -1);
+    addQ([x1, y1, 1], [x1, yTop, 1], [x0, y0, 1], [x0, yTop, 1], 0, 0, 1);
+  }
+  addQ([0, pts[0][1] + tSkin, 1], [0, yTop, 1], [0, pts[0][1] + tSkin, 0], [0, yTop, 0], -1, 0, 0);
+  addQ([w, pts[n - 1][1] + tSkin, 0], [w, yTop, 0], [w, pts[n - 1][1] + tSkin, 1], [w, yTop, 1], 1, 0, 0);
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  return g;
+}
+// Hex-head roofing screw (painted metal washer cup + flange collar + 6-sided flat-shaded hex head).
+function screwGeometry() {
+  const pos = [], nor = [], idx = [];
+  const ring = (n, r0, y0, r1, y1, ny, flat) => {
+    const nl = Math.hypot(1, ny);
+    for (let i = 0; i < n; i++) {
+      const a0 = i * Math.PI * 2 / n, a1 = (i + 1) * Math.PI * 2 / n, am = (a0 + a1) / 2;
+      const c0 = Math.cos(a0), s0 = Math.sin(a0), c1 = Math.cos(a1), s1 = Math.sin(a1), cm = Math.cos(am), sm = Math.sin(am);
+      const o = pos.length / 3;
+      pos.push(r0 * c0, y0, r0 * s0, r1 * c0, y1, r1 * s0, r0 * c1, y0, r0 * s1, r1 * c1, y1, r1 * s1);
+      if (flat) for (let k = 0; k < 4; k++) nor.push(cm / nl, ny / nl, sm / nl);
+      else nor.push(c0 / nl, ny / nl, s0 / nl, c0 / nl, ny / nl, s0 / nl, c1 / nl, ny / nl, s1 / nl, c1 / nl, ny / nl, s1 / nl);
+      idx.push(o, o + 2, o + 3, o, o + 3, o + 1);
+    }
+  };
+  ring(12, 0.0094, 0.0038, 0.0072, 0.0056, 0.85, false); // painted conical metal washer dome
+  ring(12, 0.0076, 0.0056, 0.0068, 0.0066, 0.6, false);  // hex base flange collar
+  ring(6, 0.0058, 0.0066, 0.0058, 0.0126, 0, true);      // 6-sided hex wrench flats (hard edges)
+  ring(6, 0.0058, 0.0126, 0.0044, 0.0136, 0.8, true);    // chamfered hex top
+  const cOff = pos.length / 3;
+  pos.push(0, 0.0134, 0); nor.push(0, 1, 0);
+  for (let i = 0; i < 6; i++) {
+    const a = i * Math.PI / 3;
+    pos.push(0.0044 * Math.cos(a), 0.0136, 0.0044 * Math.sin(a)); nor.push(0, 1, 0);
+    idx.push(cOff, cOff + 1 + (i + 1) % 6, cOff + 1 + i);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setIndex(idx);
+  return g;
+}
+// Dark EPDM rubber washer ring compressed under the metal washer cup.
+function washerGeometry() {
+  const pos = [], nor = [], idx = [], n = 12;
+  const levels = [[0.0100, 0.0012, -0.3], [0.0108, 0.0027, 0], [0.0092, 0.0041, 0.6], [0.0065, 0.0041, 1]];
+  for (let j = 0; j < levels.length - 1; j++) {
+    const [r0, y0, ny0] = levels[j], [r1, y1, ny1] = levels[j + 1];
+    for (let i = 0; i < n; i++) {
+      const a0 = i * Math.PI * 2 / n, a1 = (i + 1) * Math.PI * 2 / n;
+      const c0 = Math.cos(a0), s0 = Math.sin(a0), c1 = Math.cos(a1), s1 = Math.sin(a1), o = pos.length / 3;
+      pos.push(r0 * c0, y0, r0 * s0, r1 * c0, y1, r1 * s0, r0 * c1, y0, r0 * s1, r1 * c1, y1, r1 * s1);
+      nor.push(c0, ny0, s0, c0, ny1, s0, c1, ny0, s1, c1, ny1, s1);
+      idx.push(o, o + 2, o + 3, o, o + 3, o + 1);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setIndex(idx);
+  return g;
+}
+// Extrude a 2D bent-sheet centerline (array of [u, v, smooth]) with thickness t from s0 to s1.
+// If alongX is true, cross-section is in (z, y) and extrudes along x; otherwise cross-section is in (x, y) and extrudes along z.
+function extrudeBentSheet(pts, t, s0, s1, alongX = false) {
+  const n = pts.length, segNx = new Float32Array(n - 1), segNy = new Float32Array(n - 1);
+  for (let i = 0; i < n - 1; i++) {
+    const du = pts[i + 1][0] - pts[i][0], dv = pts[i + 1][1] - pts[i][1], l = Math.hypot(du, dv) || 1;
+    segNx[i] = -dv / l; segNy[i] = du / l;
+  }
+  const top = [], bot = [], vnx = new Float32Array(n), vny = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    let nx = (i > 0 ? segNx[i - 1] : 0) + (i < n - 1 ? segNx[i] : 0);
+    let ny = (i > 0 ? segNy[i - 1] : 0) + (i < n - 1 ? segNy[i] : 0);
+    const l = Math.hypot(nx, ny) || 1; nx /= l; ny /= l;
+    vnx[i] = nx; vny[i] = ny;
+    const dot = i > 0 && i < n - 1 ? Math.max(0.5, nx * segNx[i] + ny * segNy[i]) : 1;
+    const mt = t / dot;
+    bot.push([pts[i][0], pts[i][1]]);
+    top.push([pts[i][0] + nx * mt, pts[i][1] + ny * mt]);
+  }
+  const pos = [], nor = [], uv = [], idx = [];
+  const P3 = (u, v, s) => alongX ? [s, v, u] : [u, v, s];
+  const N3 = (nu, nv, ns) => alongX ? [ns, nv, nu] : [nu, nv, ns];
+  const addQuad = (p0, p1, p2, p3, n0, n1 = n0) => {
+    const o = pos.length / 3;
+    pos.push(...p0, ...p1, ...p2, ...p3);
+    nor.push(...n0, ...n0, ...n1, ...n1);
+    uv.push(0, 0, 0, 1, 1, 0, 1, 1);
+    if (alongX) idx.push(o, o + 3, o + 1, o, o + 2, o + 3);
+    else idx.push(o, o + 1, o + 3, o, o + 3, o + 2);
+  };
+  for (let i = 0; i < n - 1; i++) {
+    const sm = pts[i][2] && pts[i + 1][2];
+    const n0T = N3(sm ? vnx[i] : segNx[i], sm ? vny[i] : segNy[i], 0);
+    const n1T = N3(sm ? vnx[i + 1] : segNx[i], sm ? vny[i + 1] : segNy[i], 0);
+    addQuad(P3(top[i][0], top[i][1], s0), P3(top[i][0], top[i][1], s1), P3(top[i + 1][0], top[i + 1][1], s0), P3(top[i + 1][0], top[i + 1][1], s1), n0T, n1T);
+    const n0B = [-n0T[0], -n0T[1], -n0T[2]], n1B = [-n1T[0], -n1T[1], -n1T[2]];
+    addQuad(P3(bot[i + 1][0], bot[i + 1][1], s0), P3(bot[i + 1][0], bot[i + 1][1], s1), P3(bot[i][0], bot[i][1], s0), P3(bot[i][0], bot[i][1], s1), n1B, n0B);
+    addQuad(P3(bot[i][0], bot[i][1], s0), P3(top[i][0], top[i][1], s0), P3(bot[i + 1][0], bot[i + 1][1], s0), P3(top[i + 1][0], top[i + 1][1], s0), N3(0, 0, -1));
+    addQuad(P3(bot[i + 1][0], bot[i + 1][1], s1), P3(top[i + 1][0], top[i + 1][1], s1), P3(bot[i][0], bot[i][1], s1), P3(top[i][0], top[i][1], s1), N3(0, 0, 1));
+  }
+  const du0 = pts[1][0] - pts[0][0], dv0 = pts[1][1] - pts[0][1], l0 = Math.hypot(du0, dv0) || 1;
+  addQuad(P3(bot[0][0], bot[0][1], s0), P3(bot[0][0], bot[0][1], s1), P3(top[0][0], top[0][1], s0), P3(top[0][0], top[0][1], s1), N3(-du0 / l0, -dv0 / l0, 0));
+  const du1 = pts[n - 1][0] - pts[n - 2][0], dv1 = pts[n - 1][1] - pts[n - 2][1], l1 = Math.hypot(du1, dv1) || 1;
+  addQuad(P3(top[n - 1][0], top[n - 1][1], s0), P3(top[n - 1][0], top[n - 1][1], s1), P3(bot[n - 1][0], bot[n - 1][1], s0), P3(bot[n - 1][0], bot[n - 1][1], s1), N3(du1 / l1, dv1 / l1, 0));
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  return g;
+}
+function mergeGeos(geos) {
+  const pos = [], nor = [], uv = [], idx = [];
+  geos.forEach(g => {
+    const o = pos.length / 3, p = g.attributes.position.array, n = g.attributes.normal.array, u = g.attributes.uv.array, ix = g.index.array;
+    for (let i = 0; i < p.length; i++) { pos.push(p[i]); nor.push(n[i]); }
+    for (let i = 0; i < u.length; i++) uv.push(u[i]);
+    for (let i = 0; i < ix.length; i++) idx.push(ix[i] + o);
+    g.dispose();
+  });
+  const m = new THREE.BufferGeometry();
+  m.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  m.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  m.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  m.setIndex(idx);
+  return m;
+}
+// Steel lipped C-channel purlin (75 x 45 x 15 mm, 1.6 mm wall) in unit [0,1]^3 coordinates (extruded along x).
+function purlinGeometry() {
+  const ty = 0.0018 / 0.075, tz = 0.0018 / 0.045, lip = 0.015 / 0.075, r = 0.03;
+  const c = [
+    [1 - tz, 1 - lip], [1, 1 - lip], [1, 1 - r], [1 - r, 1], [r, 1], [0, 1 - r],
+    [0, r], [r, 0], [1 - r, 0], [1, r], [1, lip], [1 - tz, lip],
+    [1 - tz, ty], [tz, ty], [tz, 1 - ty], [1 - tz, 1 - ty],
+  ];
+  const pos = [], nor = [], uv = [], idx = [], n = c.length;
+  for (let i = 0; i < n; i++) {
+    const [z0, y0] = c[i], [z1, y1] = c[(i + 1) % n], dz = z1 - z0, dy = y1 - y0, l = Math.hypot(dz, dy) || 1;
+    const ny = -dz / l, nz = dy / l, o = pos.length / 3;
+    pos.push(0, y0, z0, 1, y0, z0, 0, y1, z1, 1, y1, z1);
+    for (let k = 0; k < 4; k++) nor.push(0, ny, nz);
+    uv.push(0, 0, 1, 0, 0, 1, 1, 1);
+    idx.push(o, o + 1, o + 3, o, o + 3, o + 2);
+  }
+  // End caps at x=0, x=0.5 (mid-roof cut plane), and x=1
+  const quads = [[0, 1, 2, 15], [15, 2, 3, 14], [14, 3, 4, 5], [14, 5, 6, 13], [13, 6, 7, 8], [13, 8, 9, 12], [12, 9, 10, 11]];
+  [0, 0.5, 1].forEach(x => {
+    const nx = x > 0.6 ? 1 : -1;
+    quads.forEach(([a, b, d, e]) => {
+      const o = pos.length / 3;
+      [a, b, d, e].forEach(k => { pos.push(x, c[k][1], c[k][0]); nor.push(nx, 0, 0); uv.push(c[k][0], c[k][1]); });
+      if (nx > 0) idx.push(o, o + 1, o + 2, o, o + 2, o + 3);
+      else idx.push(o, o + 2, o + 1, o, o + 3, o + 2);
+    });
+  });
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  return g;
+}
+// Timber rafter with subtle chamfered longitudinal bevel in unit [0,1]^3 coordinates.
+function rafterGeometry() {
+  const b = 0.07, ring = [[b, 0], [1 - b, 0], [1, b], [1, 1 - b], [1 - b, 1], [b, 1], [0, 1 - b], [0, b]];
+  const pos = [], nor = [], uv = [], idx = [], n = ring.length;
+  for (let i = 0; i < n; i++) {
+    const [x0, y0] = ring[i], [x1, y1] = ring[(i + 1) % n], dx = x1 - x0, dy = y1 - y0, l = Math.hypot(dx, dy) || 1;
+    const o = pos.length / 3;
+    pos.push(x0, y0, 0, x0, y0, 1, x1, y1, 0, x1, y1, 1);
+    for (let k = 0; k < 4; k++) nor.push(dy / l, -dx / l, 0);
+    uv.push(0, 0, 0, 1, 1, 0, 1, 1);
+    idx.push(o, o + 2, o + 3, o, o + 3, o + 1);
+  }
+  [0, 1].forEach(z => {
+    const nz = z ? 1 : -1, o = pos.length / 3;
+    ring.forEach(([x, y]) => { pos.push(x, y, z); nor.push(0, 0, nz); uv.push(x, y); });
+    for (let i = 1; i < n - 1; i++) idx.push(o, z ? o + i : o + i + 1, z ? o + i + 1 : o + i);
+  });
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  return g;
+}
+function waveProfile(width, pitch, amp, perWave) {
+  const p = [], n = Math.round(width / pitch * perWave);
+  for (let i = 0; i <= n; i++) { const x = width * i / n; p.push([x, amp * (1 - Math.cos(2 * Math.PI * x / pitch))]); }
+  return p;
+}
+const GEO = {
+  trap: profileGeometry(trapProfile(), false),                       // sheetW wide new sheet, unit length
+  foam: foamGeometry(trapProfile()),                                 // 25 mm PU foam + silver foil underside
+  closure: closureGeometry(trapProfile()),                           // profiled foam closure filler strip
+  corr: profileGeometry(waveProfile(0.66, 0.076, 0.0095, 8), true),  // 0.66 m galvanized sheet
+  fibre: profileGeometry(waveProfile(4.0, 0.177, 0.025, 10), true),  // fibre-cement lean-to
+  screw: screwGeometry(),                                            // hex head + painted metal washer cup
+  washer: washerGeometry(),                                          // dark EPDM rubber washer ring
+  purlin: purlinGeometry(),                                          // 75x45x15x1.6 mm steel lipped C-channel
+  rafter: rafterGeometry(),                                          // bevelled timber rafter
+};
+
+/* ------------------------------ roof frame ------------------------------ */
+// Section A falls to the canal (+z); B and C are one plane falling to the back (-z).
+function computeFrame() {
+  const aB = rad(P.pitch), aF = rad(P.pitchF);
+  const cB = Math.cos(aB), sB = Math.sin(aB), cF = Math.cos(aF), sF = Math.sin(aF);
+  const totalRun = P.lenA * cF + (P.lenB + P.lenC) * cB;
+  const span = FRONT_WALL - BACK_WALL;
+  const oh = (totalRun - span) / 2;            // equal overhang front and back
+  const frontEaveZ = FRONT_WALL + oh;
+  const ridgeZ = frontEaveZ - P.lenA * cF;
+  const ridgeY = ANCHOR.y + Math.tan(aB) * (ridgeZ - ANCHOR.z);
+  const R = new V3(0, ridgeY, ridgeZ);
+  const back = { d: new V3(0, -sB, -cB), n: new V3(0, cB, -sB) };
+  const S = {
+    A: { key: 'A', u0: 0, u1: P.lenA, d: new V3(0, -sF, cF), n: new V3(0, cF, sF), sheetLen: P.sheetLenA, upper: false },
+    B: { key: 'B', u0: 0, u1: P.lenB, ...back, sheetLen: P.sheetLenB, upper: false },
+    C: { key: 'C', u0: P.lenB, u1: P.lenB + P.lenC, ...back, sheetLen: P.sheetLenC, upper: true },
+  };
+  const F = {
+    R, S, aB, aF, oh, frontEaveZ, ridgeZ, ridgeY,
+    backEaveZ: ridgeZ - (P.lenB + P.lenC) * cB,
+    frontEaveY: ridgeY - P.lenA * sF,
+    backEaveY: ridgeY - (P.lenB + P.lenC) * sB,
+    W: P.width,
+  };
+  F.yU = z => z >= ridgeZ ? ridgeY - Math.tan(aF) * (z - ridgeZ) : ridgeY - Math.tan(aB) * (ridgeZ - z);
+  F.pt = (sec, u, x, h = 0) => new V3(x, R.y + sec.d.y * u + sec.n.y * h, R.z + sec.d.z * u + sec.n.z * h);
+  F.mat = (sec, uA, uB, x0, sx, h0, sy) => slopeMatrix(F.pt(sec, uA, x0, h0), F.pt(sec, uB, x0, h0), sx, sy);
+  return F;
+}
+
+/* Sheet layout for one section. Rows run from the eave up; the top row is cut
+   unless the extra length simply laps under the section above. */
+function layoutRows(L, Ls, lap, hasUpper) {
+  const eff = Ls - lap;
+  const n = L <= Ls + 1e-9 ? 1 : 1 + Math.ceil((L - Ls) / eff - 1e-9);
+  const coverage = Ls + (n - 1) * eff;
+  const excess = coverage - L;
+  const trim = Math.max(0, excess - (hasUpper ? lap : 0));
+  const rows = [];
+  for (let i = 0; i < n; i++) rows.push({ start: i * eff, len: i === n - 1 ? Ls - trim : Ls });
+  return { n, coverage, excess, trim, rows, eff };
+}
+function layoutCols(W, sw, ew) {
+  const n = W <= sw + 1e-9 ? 1 : 1 + Math.ceil((W - sw) / ew - 1e-9);
+  const coverage = sw + (n - 1) * ew;
+  const cut = Math.max(0, coverage - W);
+  const cols = [];
+  for (let j = 0; j < n; j++) cols.push({ x0: -W / 2 + j * ew, w: j === n - 1 ? sw - cut : sw });
+  return { n, coverage, cut, cols, margin: coverage - W };
+}
+/* Purlins follow the sheets: one 5 cm in from the eave, one under the middle of every end lap,
+   one just below the ridge, and extra ones in between so no gap exceeds P.purlinMax.
+   Section C's top row ends on section B's eave purlin, so C adds no top purlin.
+   Returns positions as u (distance down the slope from the ridge). */
+function purlinUs(F, key) {
+  const s = F.S[key], L = s.u1 - s.u0, lap = P.stockL - P.effL;
+  const rows = layoutRows(L, s.sheetLen, lap, s.upper);
+  const keyD = [0.05];
+  rows.rows.forEach((r, i) => { if (i > 0) keyD.push(r.start + lap / 2); });
+  keyD.push(s.upper ? L + 0.05 : L - 0.1);
+  const ds = [];
+  for (let i = 0; i < keyD.length - 1; i++) {
+    const a = keyD[i], b = keyD[i + 1], n = Math.max(1, Math.ceil((b - a) / P.purlinMax - 1e-9));
+    for (let j = 0; j < n; j++) ds.push(a + (b - a) * j / n);
+  }
+  if (!s.upper) ds.push(keyD[keyD.length - 1]);
+  return ds.map(d => s.u1 - d);
+}
+
+/* ------------------------------ scene groups ------------------------------ */
+const root = new THREE.Group(); root.name = 'CanalHouse'; scene.add(root);
+const G = {};
+['house', 'neighbours', 'context', 'structure', 'oldRoof', 'newRoof', 'newLaps', 'newFlash', 'dims', 'numbers', 'measure'].forEach(k => { G[k] = new THREE.Group(); G[k].name = k; root.add(G[k]); });
+let scanMesh = null;
+let newSheetMesh = null, newSheetInfo = [];
+let install = null;  // per-sheet cumulative counts for the laying-order slider
+let stats = null;
+
+function clearGroup(g) {
+  g.traverse(o => {
+    if (o.isCSS2DObject && o.element.parentNode) o.element.parentNode.removeChild(o.element);
+    if (o.geometry && !Object.values(GEO).includes(o.geometry) && o.geometry !== UNIT_BOX) o.geometry.dispose();
+    if (o.isInstancedMesh) o.dispose();
+  });
+  g.clear();
+}
+function label(text, cls, html = false) {
+  const el = document.createElement('div'); el.className = cls;
+  if (html) el.innerHTML = text; else el.textContent = text;
+  return new CSS2DObject(el);
+}
+function worldPlane(w, h, mat) {
+  const g = new THREE.PlaneGeometry(w, h);
+  const uv = g.attributes.uv;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w, uv.getY(i) * h);
+  const m = new THREE.Mesh(g, mat); m.receiveShadow = m.castShadow = true;
+  return m;
+}
+// Side wall along z following the roof line; profile pts are [z, y]; wall occupies x in [X0 - depth, X0].
+function sideWall(pts, X0, depth, mat) {
+  const shape = new THREE.Shape(pts.map(p => new THREE.Vector2(p[0], p[1])));
+  const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false });
+  const pos = g.attributes.position;
+  for (let i = 0; i < pos.count; i++) { const px = pos.getX(i), py = pos.getY(i), pz = pos.getZ(i); pos.setXYZ(i, X0 - pz, py, px); }
+  g.computeVertexNormals();
+  const m = new THREE.Mesh(g, mat); m.castShadow = m.receiveShadow = true;
+  return m;
+}
+function shapeWall(outline, holes, mat, z) {
+  const s = new THREE.Shape(outline.map(p => new THREE.Vector2(...p)));
+  holes.forEach(h => s.holes.push(new THREE.Path(h.map(p => new THREE.Vector2(...p)))));
+  const m = new THREE.Mesh(new THREE.ShapeGeometry(s), mat);
+  m.position.z = z; m.castShadow = m.receiveShadow = true;
+  return m;
+}
+const rect = (x0, y0, x1, y1) => [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+
+/* ------------------------------ the house ------------------------------ */
+function buildHouse(F) {
+  const W = F.W, h = G.house, yU = F.yU;
+  const profile = [[BACK_WALL, 0], [FRONT_WALL, 0], [FRONT_WALL, yU(FRONT_WALL)]];
+  if (F.ridgeZ > BACK_WALL && F.ridgeZ < FRONT_WALL) profile.push([F.ridgeZ, F.ridgeY]);
+  profile.push([BACK_WALL, yU(BACK_WALL)]);
+  // shared (party) walls left and right
+  h.add(sideWall(profile, -W / 2 + 0.08, 0.08, M.party));
+  h.add(sideWall(profile, W / 2, 0.08, M.party));
+
+  const boxes = { concrete: new Batch(), timber: new Batch(), timberLight: new Batch(), frame: new Batch(), dark: new Batch(), ac: new Batch(), board: new Batch(), glass: new Batch() };
+  // ground slab and 2nd floor
+  boxes.concrete.box(-W / 2, W / 2, -0.15, 0, BACK_WALL, FRONT_WALL);
+  boxes.timberLight.box(-W / 2 + 0.08, W / 2 - 0.08, FLOOR2_UNDER, FLOOR2, MID_WALL, FRONT_WALL);
+  for (let z = MID_WALL + 0.2; z < FRONT_WALL - 0.1; z += 0.45) boxes.timber.box(-W / 2 + 0.08, W / 2 - 0.08, FLOOR2_UNDER - 0.15, FLOOR2_UNDER, z, z + 0.05);
+  boxes.timber.box(-W / 2 + 0.08, W / 2 - 0.08, FLOOR2_UNDER - 0.25, FLOOR2_UNDER, FRONT_WALL - 0.15, FRONT_WALL); // front beam
+  // flat ceiling of the upstairs front room (hides the ridge in the scan)
+  boxes.timberLight.box(-W / 2 + 0.08, W / 2 - 0.08, CEIL2, CEIL2 + 0.02, MID_WALL, FRONT_WALL - 0.02);
+  // posts at the corners of the 2-storey frame
+  [MID_WALL, FRONT_WALL - 0.12].forEach(z => [-W / 2 + 0.08, W / 2 - 0.2].forEach(x => boxes.timber.box(x, x + 0.12, 0, CEIL2, z - 0.06, z + 0.06)));
+  // stairs (16 risers) along the right wall, rising to the upstairs room
+  const nSteps = 16, run = 2.6, z0 = MID_WALL - run;
+  for (let i = 0; i < nSteps; i++) {
+    const zz = z0 + run * i / nSteps, yy = FLOOR2 * (i + 1) / nSteps;
+    boxes.timberLight.box(1.0, W / 2 - 0.1, yy - 0.04, yy, zz, zz + run / nSteps + 0.03);
+  }
+  boxes.timber.box(0.95, 1.0, 0, FLOOR2, z0, MID_WALL); // stringer (simplified)
+
+  // ---- front facade (canal side) ----
+  const f = FRONT_WALL + 0.002;
+  const gf = worldPlane(W, FLOOR2_UNDER, M.wood); gf.position.set(0, FLOOR2_UNDER / 2, f); h.add(gf);
+  const uf = worldPlane(W, CEIL2 + 0.15 - FLOOR2_UNDER, M.white); uf.position.set(0, (CEIL2 + 0.15 + FLOOR2_UNDER) / 2, f); h.add(uf);
+  const fretBack = worldPlane(W - 0.16, 0.3, M.dark); fretBack.position.set(0, CEIL2 + 0.3, f - 0.05); h.add(fretBack);
+  const fretG = new THREE.PlaneGeometry(W - 0.16, 0.3); const fu = fretG.attributes.uv; for (let i = 0; i < fu.count; i++) fu.setX(i, fu.getX(i) * (W - 0.16) / 1.0);
+  const fret = new THREE.Mesh(fretG, M.fret); fret.position.set(0, CEIL2 + 0.3, f + 0.004); h.add(fret);
+  const topY = yU(FRONT_WALL);
+  if (topY > CEIL2 + 0.45) {
+    const gab = shapeWall(rect(-W / 2, CEIL2 + 0.45, W / 2, topY), [], M.white, f); h.add(gab);
+  }
+  // ground-floor double doors (folding grille) and transom
+  [-0.62, 0.02].forEach(x => { const d = new THREE.Mesh(UNIT_BOX, M.grille); d.matrixAutoUpdate = false; d.matrix.copy(boxMatrix(x, x + 0.6, 0.02, 2.35, f, f + 0.03)); h.add(d); });
+  boxes.frame.box(-0.7, 0.7, 2.35, 2.45, f, f + 0.04);
+  boxes.dark.box(-0.7, 0.7, 2.45, 2.95, f, f + 0.01);
+  // upstairs door, window, AC unit, leaning board
+  const door = new THREE.Mesh(UNIT_BOX, M.door); door.matrixAutoUpdate = false; door.matrix.copy(boxMatrix(0.95, 1.75, FLOOR2 + 0.02, FLOOR2 + 2.05, f, f + 0.04)); h.add(door);
+  boxes.frame.box(-1.25, -0.25, FLOOR2 + 0.95, FLOOR2 + 2.0, f, f + 0.03);
+  boxes.glass.box(-1.18, -0.32, FLOOR2 + 1.02, FLOOR2 + 1.93, f + 0.01, f + 0.035);
+  boxes.ac.box(-1.55, -0.75, FLOOR2, FLOOR2 + 0.56, f + 0.05, f + 0.33);
+  boxes.board.add(new THREE.Matrix4().makeRotationX(-0.06).premultiply(boxMatrix(-0.45, 0.35, FLOOR2, FLOOR2 + 1.42, f + 0.06, f + 0.09)));
+
+  // ---- rear wall (under the back eave), light green with louvre window ----
+  const bw = worldPlane(W, yU(BACK_WALL), M.green); bw.position.set(0, yU(BACK_WALL) / 2, BACK_WALL - 0.002); bw.rotation.y = Math.PI; h.add(bw);
+  const lv = new THREE.Mesh(UNIT_BOX, M.louvre); lv.matrixAutoUpdate = false; lv.matrix.copy(boxMatrix(-0.55, 0.35, 2.92, 3.42, BACK_WALL - 0.04, BACK_WALL - 0.002)); h.add(lv);
+
+  // ---- interior walls ----
+  const yi = yU(INNER_WALL);
+  h.add(shapeWall(rect(-W / 2 + 0.08, 0, W / 2 - 0.08, yi), [rect(-0.45, 0.02, 0.45, 2.1)], M.wood, INNER_WALL));
+  const ym = yU(MID_WALL);
+  h.add(shapeWall(rect(-W / 2 + 0.08, 0, W / 2 - 0.08, ym), [rect(-1.2, 0.02, -0.2, 2.2), rect(1.0, FLOOR2 + 0.02, 1.85, FLOOR2 + 2.0)], M.wood, MID_WALL));
+
+  // ---- back block (back room + bathroom), already metal-sheet roof ----
+  const bbH = 2.62;
+  boxes.concrete.box(-W / 2, W / 2, -0.15, 0.3, BACKBLOCK_END, BACK_WALL);
+  [-W / 2, W / 2 - 0.08].forEach(x => boxes.timberLight.box(x, x + 0.08, 0.3, bbH, BACKBLOCK_END, BACK_WALL));
+  const bbw = worldPlane(W, bbH, M.green); bbw.position.set(0, bbH / 2, BACKBLOCK_END - 0.002); bbw.rotation.y = Math.PI; h.add(bbw);
+  boxes.dark.box(-1.2, -0.4, 1.3, 2.0, BACKBLOCK_END - 0.03, BACKBLOCK_END - 0.004);
+  boxes.timberLight.box(-W / 2 + 0.08, W / 2 - 0.08, 0.3, 2.31, -7.98, -7.9); // bathroom partition
+
+  Object.entries(boxes).forEach(([k, b]) => { if (b.m.length) h.add(b.build(M[k])); });
+
+  // back block roof: low-slope trapezoidal sheets (existing, mixed colours)
+  const backRoof = new Batch(), backCols = [];
+  const bs = new V3(0, 2.46, BACKBLOCK_END - 0.3), be = new V3(0, 2.78, BACK_WALL);
+  for (let j = 0; j < 6; j++) {
+    const x0 = -W / 2 + j * 0.65;
+    const m = slopeMatrix(new V3(x0, bs.y, bs.z), new V3(x0, be.y, be.z), j === 5 ? 0.75 : 1, 1);
+    backRoof.add(m); backCols.push([0xb9bec2, 0xc9b9a6, 0x2a2c2e, 0x2a2c2e, 0x30323a, 0x2a2c2e][j]);
+  }
+  const brm = backRoof.build(M.oldBack, GEO.trap);
+  backCols.forEach((c, i) => brm.setColorAt(i, new THREE.Color(c)));
+  h.add(brm);
+}
+
+function buildNeighbours(F) {
+  const W = F.W, yU = F.yU;
+  const prof = [[BACK_WALL, 0], [FRONT_WALL, 0], [FRONT_WALL, yU(FRONT_WALL)]];
+  if (F.ridgeZ > BACK_WALL && F.ridgeZ < FRONT_WALL) prof.push([F.ridgeZ, F.ridgeY]);
+  prof.push([BACK_WALL, yU(BACK_WALL)]);
+  G.neighbours.add(sideWall(prof, -W / 2 - 0.03, 3.9, M.neighbour));
+  G.neighbours.add(sideWall(prof, W / 2 + 3.93, 3.9, M.neighbour));
+  G.neighbours.children.forEach(m => { m.userData.side = m === G.neighbours.children[0] ? -1 : 1; });
+}
+
+function buildContext() {
+  const c = G.context;
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(140, 60), M.ground);
+  ground.rotation.x = -Math.PI / 2; ground.position.set(0, -0.16, CANAL_EDGE - 30); ground.receiveShadow = true; c.add(ground);
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(140, 40), M.water);
+  water.rotation.x = -Math.PI / 2; water.position.set(0, -1.0, CANAL_EDGE + 20); water.receiveShadow = true;
+  water.material.map.repeat.set(10, 4); c.add(water);
+  const b = { concrete: new Batch(), deck: new Batch(), timber: new Batch() };
+  b.concrete.box(-14, 14, -1.2, 0, FRONT_WALL, CANAL_EDGE);        // 1.20 m concrete walkway
+  b.concrete.box(-14, 14, -1.2, -0.16, CANAL_EDGE - 0.15, CANAL_EDGE);
+  b.deck.box(-2.0, 2.0, -0.08, 0, CANAL_EDGE, 14.1);                // canal-side deck
+  for (let z = CANAL_EDGE + 0.4; z < 14.1; z += 1.2) for (let x = -1.8; x <= 1.8; x += 1.2) b.timber.box(x, x + 0.1, -1.4, -0.08, z, z + 0.1);
+  // front lean-to (ground floor): posts, beam, fibre-cement corrugated roof
+  [-1.9, 1.78].forEach(x => [11.4, 13.85].forEach(z => b.timber.box(x, x + 0.12, 0, 2.95, z - 0.06, z + 0.06)));
+  b.timber.box(-2.0, 2.0, 2.78, 2.92, 13.79, 13.91);
+  b.timber.box(-2.0, 2.0, 2.95, 3.07, 11.34, 11.46);
+  Object.entries(b).forEach(([k, bb]) => c.add(bb.build(M[k])));
+  const lt = new THREE.Mesh(GEO.fibre, M.fibre);
+  lt.matrixAutoUpdate = false; lt.matrix.copy(slopeMatrix(new V3(-2.0, 3.22, FRONT_WALL), new V3(-2.0, 2.92, 14.05), 1, 1));
+  lt.castShadow = lt.receiveShadow = true;
+  M.fibre.map.repeat.set(1, 3);
+  c.add(lt);
+}
+
+/* ------------------------------ roof structure ------------------------------ */
+function buildStructure(F) {
+  const W = F.W, rafters = new Batch(), purlins = new Batch();
+  const xs = []; const nR = 6; for (let i = 0; i < nR; i++) xs.push(-W / 2 + 0.06 + (W - 0.17) * i / (nR - 1));
+  ['A', 'B', 'C'].forEach(k => {
+    const s = F.S[k];
+    xs.forEach(x => rafters.add(F.mat(s, s.u0, s.u1, x, 0.05, -0.225, 0.15)));
+    // Steel lipped C-channel purlins: 75 mm web height (h -0.075..0), 45 mm flange width (u ± 0.0225), 15 mm lips
+    purlinUs(F, k).forEach(u => purlins.add(F.mat(s, u - 0.0225, u + 0.0225, -W / 2 - 0.04, W + 0.08, -0.075, 0.075)));
+  });
+  rafters.box(-W / 2, W / 2, F.ridgeY - 0.30, F.ridgeY - 0.06, F.ridgeZ - 0.04, F.ridgeZ + 0.04); // ridge beam
+  G.structure.add(rafters.build(M.timber, GEO.rafter), purlins.build(M.purlin, GEO.purlin));
+}
+
+/* ------------------------------ existing roof ------------------------------ */
+function buildOldRoof(F) {
+  const W = F.W, r = rng(77);
+  const sw = 0.66, ew = 0.60, Ls = 1.83, lap = 0.15;
+  const by = { galvRust: new Batch(), galvMixed: new Batch(), galvNew: new Batch() };
+  let count = 0;
+  const secs = [['A', P.lenA, false], ['B', P.lenB, false], ['C', P.lenC, true]];
+  secs.forEach(([k, L, upper]) => {
+    const s = F.S[k];
+    const rows = layoutRows(L, Ls, lap, upper), cols = layoutCols(W, sw, ew);
+    const eave = s.u1;
+    rows.rows.forEach((row, ri) => cols.cols.forEach((col, ci) => {
+      const jx = (r() - 0.5) * 0.03, ju = (r() - 0.5) * 0.06;
+      const uB = eave - row.start + ju, uA = uB - row.len;
+      const nearRidge = (k !== 'C' && uA < 1.2);
+      const pick = r();
+      const kind = nearRidge && pick < 0.5 ? 'galvNew' : pick < 0.58 ? 'galvRust' : pick < 0.93 ? 'galvMixed' : 'galvNew';
+      by[kind].add(F.mat(s, Math.max(s.u0 - 0.05, uA), uB, col.x0 + jx, col.w / sw, 0.004 + ri * 0.004 + ci * 0.0015, 1));
+      count++;
+    }));
+  });
+  Object.entries(by).forEach(([k, b]) => { if (b.m.length) G.oldRoof.add(b.build(M[k], GEO.corr)); });
+  const cap = new Batch();
+  cap.add(F.mat(F.S.A, 0, 0.22, -W / 2, W, 0.06, 0.004));
+  cap.add(F.mat(F.S.B, 0, 0.22, -W / 2, W, 0.06, 0.004));
+  G.oldRoof.add(cap.build(M.galvCap));
+  return count;
+}
+
+/* ------------------------------ new roof ------------------------------ */
+// Laying order: the back slope first (rear eave up to the ridge, one column at a time,
+// each column lapping over the last rib of the one before), then the front slope.
+const LAY_ORDER = { C: [0, 0], B: [0, 1], A: [1, 0] };
+function buildNewRoof(F) {
+  const W = F.W, lap = P.stockL - P.effL, sideLap = P.sheetW - P.effW, R = ribCenters();
+  const sheets = new Batch(), foam = new Batch(), screws = [], laps = new Batch(), edges = [];
+  const one = new V3(1, 1, 1);
+  newSheetInfo = [];
+  const out = {}, list = [];
+  ['A', 'B', 'C'].forEach(k => {
+    const s = F.S[k], L = s.u1 - s.u0;
+    const rows = layoutRows(L, s.sheetLen, lap, s.upper);
+    const cols = layoutCols(W, P.sheetW, P.effW);
+    const purl = purlinUs(F, k);
+    out[k] = { L, rows, cols, sheets: rows.n * cols.n, screws: 0, sheetLen: s.sheetLen, purl };
+    rows.rows.forEach((row, ri) => cols.cols.forEach((col, ci) => list.push({ k, s, row, ri, col, ci, n: ri * cols.n + ci + 1, purl })));
+  });
+  const key = e => [LAY_ORDER[e.k][0], e.ci, LAY_ORDER[e.k][1], e.ri];
+  list.sort((a, b) => { const ka = key(a), kb = key(b); for (let i = 0; i < 4; i++) if (ka[i] !== kb[i]) return ka[i] - kb[i]; return 0; });
+  const cJoin = Math.min(out.C.rows.excess, lap);   // how far C's top row runs under B
+  const cum = { screws: [0], laps: [0] }, screwAt = new Map();
+  list.forEach(e => {
+    const { k, s, row, ri, col, ci } = e;
+    const uB = s.u1 - row.start, uA = uB - row.len;
+    // each later sheet sits a few mm higher, so it lies on top where it overlaps
+    const h = 0.025 + (k === 'B' ? 0.009 : 0) + ri * 0.003 + ci * 0.003;
+    const sx = col.w / P.sheetW;
+    sheets.add(F.mat(s, uA, uB, col.x0, sx, h, 1));
+    foam.add(F.mat(s, uA, uB, col.x0, sx, h, 1));
+    newSheetInfo.push({ id: `${k}${e.n}`, k, row: ri + 1, col: ci + 1, len: row.len, w: col.w, cut: row.len < s.sheetLen - 1e-6 || col.w < P.sheetW - 1e-6 });
+    // overlaps this sheet makes over sheets already laid: side lap on its left edge, end lap at its lower end
+    const hl = h + RIB_H + 0.004;
+    if (ci > 0) laps.add(F.mat(s, uA, uB, col.x0, sideLap, hl, 0.002));
+    const endLap = ri > 0 ? lap : (k === 'B' ? cJoin : 0);
+    if (endLap > 1e-6) laps.add(F.mat(s, uB - endLap, uB, col.x0, col.w, hl, 0.002));
+    // outline of the sheet, just above its pans
+    const he = h + 0.003, x1 = col.x0 + col.w;
+    const c = [F.pt(s, uA, col.x0, he), F.pt(s, uA, x1, he), F.pt(s, uB, x1, he), F.pt(s, uB, col.x0, he)];
+    for (let i = 0; i < 4; i++) edges.push(c[i], c[(i + 1) % 4]);
+    // screws: through rib 1, 3, 5 at every purlin under the sheet. Where sheets overlap
+    // (nested side rib, end lap on a purlin) one screw goes through both: count it once,
+    // with its head on the upper (later) sheet.
+    const q = new THREE.Quaternion().setFromUnitVectors(new V3(0, 1, 0), s.n);
+    e.purl.forEach(u => {
+      if (u < uA + 0.03 || u > uB - 0.03) return;
+      [0, 2, 4].forEach(r => {
+        const xr = col.x0 + R[r] * sx;
+        if (xr > x1) return;
+        const m = new THREE.Matrix4().compose(F.pt(s, u, xr, h + RIB_H), q, one), id = `${k === 'A' ? 'front' : 'back'}|${u.toFixed(3)}|${xr.toFixed(3)}`;
+        if (screwAt.has(id)) { screws[screwAt.get(id)] = m; return; }
+        screwAt.set(id, screws.length); screws.push(m);
+        out[k].screws++;
+      });
+    });
+    cum.screws.push(screws.length); cum.laps.push(laps.m.length);
+    const l = label(`${k}${e.n}`, 'sheetno'); l.position.copy(F.pt(s, (uA + uB) / 2, col.x0 + col.w / 2, h + 0.06)); G.numbers.add(l);
+  });
+  const screwMesh = new THREE.InstancedMesh(GEO.screw, M.screw, Math.max(1, screws.length));
+  const washerMesh = new THREE.InstancedMesh(GEO.washer, M.epdm, Math.max(1, screws.length));
+  screws.forEach((m, i) => { screwMesh.setMatrixAt(i, m); washerMesh.setMatrixAt(i, m); });
+  screwMesh.count = washerMesh.count = screws.length;
+  screwMesh.computeBoundingSphere(); washerMesh.computeBoundingSphere();
+  newSheetMesh = sheets.build(M.sheet, GEO.trap);
+  newSheetMesh.name = 'newSheets';
+  const foamMesh = foam.build(M.foam, GEO.foam), lapMesh = laps.build(M.lap);
+  lapMesh.renderOrder = 5;
+  const edgeLines = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(edges), M.outline);
+  G.newRoof.add(newSheetMesh, foamMesh);
+  G.newLaps.add(lapMesh, edgeLines);
+  G.newFlash.add(screwMesh, washerMesh);
+  install = { total: list.length, cum, sheetMesh: newSheetMesh, foamMesh, lapMesh, screwMesh, washerMesh, edgeLines, labels: G.numbers.children.slice(), seq: newSheetInfo };
+
+  // flashings: roll-top ridge cap with flanges & hem, L-profile barge flashings with drip lip,
+  // eave drip trims, and profiled foam closures under the ridge cap and at eaves
+  const flashGeos = [], closures = new Batch(), tFl = 0.0018;
+  const hRA = 0.025 + (out.A.rows.n - 1) * 0.003 + (out.A.cols.n - 1) * 0.003 + RIB_H + 0.003;
+  const hRB = 0.034 + (out.B.rows.n - 1) * 0.003 + (out.B.cols.n - 1) * 0.003 + RIB_H + 0.003;
+  const rPt = (sec, u, h, sm = false) => [F.ridgeZ + sec.d.z * u + sec.n.z * h, F.ridgeY + sec.d.y * u + sec.n.y * h, sm];
+  const ridgePts = [
+    rPt(F.S.B, 0.258, hRB - 0.009), rPt(F.S.B, 0.270, hRB - 0.008), rPt(F.S.B, 0.262, hRB + 0.001),
+    rPt(F.S.B, 0.160, hRB + 0.002), rPt(F.S.B, 0.150, hRB + 0.006), rPt(F.S.B, 0.056, hRB + 0.006),
+    rPt(F.S.B, 0.046, hRB + 0.018),
+  ];
+  const shB = rPt(F.S.B, 0.042, hRB + 0.020), shA = rPt(F.S.A, 0.042, hRA + 0.020);
+  const cZ = (shB[0] + shA[0]) / 2, cY = Math.max(shB[1], shA[1]) - 0.006;
+  for (let i = 0; i <= 12; i++) {
+    const t = i / 12, a = Math.PI * 0.85 * (1 - t) + Math.PI * 0.15 * t;
+    ridgePts.push([cZ - Math.cos(a) * (shA[0] - cZ) / Math.cos(Math.PI * 0.15), cY + Math.sin(a) * 0.038, true]);
+  }
+  ridgePts.push(
+    rPt(F.S.A, 0.046, hRA + 0.018), rPt(F.S.A, 0.056, hRA + 0.006), rPt(F.S.A, 0.150, hRA + 0.006),
+    rPt(F.S.A, 0.160, hRA + 0.002), rPt(F.S.A, 0.262, hRA + 0.001), rPt(F.S.A, 0.270, hRA - 0.008),
+    rPt(F.S.A, 0.258, hRA - 0.009),
+  );
+  flashGeos.push(extrudeBentSheet(ridgePts, tFl, -W / 2 - 0.036, W / 2 + 0.036, true));
+
+  // Barge / side flashings (L-profile with top stiffening rib, inner crush fold + hem, and outward drip lip)
+  ['A', 'B', 'C'].forEach(k => {
+    const s = F.S[k], o = out[k];
+    const hBase = 0.025 + (k === 'B' ? 0.009 : 0) + (o.rows.n - 1) * 0.003 + RIB_H + 0.004;
+    [-1, 1].forEach(side => {
+      const hSide = hBase + (side > 0 ? (o.cols.n - 1) * 0.003 : 0), xE = side * (W / 2);
+      const raw = [
+        [xE + side * 0.042, -0.102, false], [xE + side * 0.049, -0.108, false], [xE + side * 0.035, -0.094, false],
+        [xE + side * 0.035, -0.030, false], [xE + side * 0.032, -0.022, false], [xE + side * 0.032, hSide - 0.003, true],
+        [xE + side * 0.029, hSide, true], [xE - side * 0.045, hSide, false], [xE - side * 0.052, hSide + 0.0035, false],
+        [xE - side * 0.068, hSide + 0.0035, false], [xE - side * 0.075, hSide, false], [xE - side * 0.125, hSide, false],
+        [xE - side * 0.135, hSide - 0.010, false], [xE - side * 0.126, hSide - 0.011, false],
+      ];
+      if (side > 0) raw.reverse();
+      const bg = extrudeBentSheet(raw, tFl, 0, 1, false);
+      bg.applyMatrix4(F.mat(s, s.u0, s.u1, 0, 1, 0, 1));
+      flashGeos.push(bg);
+    });
+  });
+
+  // Eave drip trims at front eave (section A) and rear eave (section C)
+  [['A', P.lenA], ['C', P.lenB + P.lenC]].forEach(([k, uE]) => {
+    const s = F.S[k];
+    const ep = [
+      rPt(s, uE - 0.064, 0.004), rPt(s, uE - 0.072, 0.001), rPt(s, uE + 0.003, 0.001),
+      rPt(s, uE + 0.004, -0.042), rPt(s, uE + 0.007, -0.050), rPt(s, uE + 0.007, -0.096),
+      rPt(s, uE + 0.020, -0.109), rPt(s, uE + 0.013, -0.103),
+    ];
+    if (s.d.z < 0) ep.reverse();
+    flashGeos.push(extrudeBentSheet(ep, tFl, -W / 2 - 0.034, W / 2 + 0.034, true));
+  });
+
+  // Foam profile closures under the ridge cap (A & B); the PU backing already seals the eaves
+  ['A', 'B'].forEach(k => {
+    const s = F.S[k], o = out[k], ri = o.rows.n - 1;
+    o.cols.cols.forEach((col, ci) => {
+      const h = 0.025 + (k === 'B' ? 0.009 : 0) + ri * 0.003 + ci * 0.003;
+      closures.add(F.mat(s, 0.215, 0.250, col.x0, col.w / P.sheetW, h, 1));
+    });
+  });
+
+  const flashMesh = new THREE.Group();
+  const flashBody = new THREE.Mesh(mergeGeos(flashGeos), M.flash);
+  flashBody.castShadow = flashBody.receiveShadow = true;
+  flashMesh.add(flashBody, closures.build(M.closure, GEO.closure));
+  G.newFlash.add(flashMesh);
+  install.flashMesh = flashMesh;
+
+  // call-outs on section B, on the side facing the default view: cover width, cover length, both laps
+  const sB = F.S.B, cB = out.B.cols, rB = out.B.rows;
+  if (cB.n > 1 && rB.n > 2) {
+    const u = d => sB.u1 - d, hD = 0.16;
+    const xa = cB.cols[cB.n - 2].x0, xb = cB.cols[cB.n - 1].x0, dRow = rB.rows[1].start + rB.eff / 2;
+    G.newLaps.add(dimLine(F.pt(sB, u(dRow), xa, hD), F.pt(sB, u(dRow), xb, hD), sB.d, `ระยะคลุม ${fm(P.effW * 100, 0)} ซม.`, 'dim acc'));
+    const xl = xb + Math.min(cB.cols[cB.n - 1].w, P.sheetW) * 0.62;
+    G.newLaps.add(dimLine(F.pt(sB, u(rB.rows[1].start), xl, hD), F.pt(sB, u(rB.rows[2].start), xl, hD), X_AXIS, `ระยะคลุม ${fm(rB.eff * 100, 0)} ซม.`, 'dim acc'));
+    const l1 = label(`ทับข้าง ${fm(sideLap * 100, 0)} ซม.`, 'dim lapl'); l1.position.copy(F.pt(sB, u(rB.rows[1].start + 0.5), xb + sideLap / 2, hD)); G.newLaps.add(l1);
+    const l2 = label(`ทับหัวท้าย ${fm(lap * 100, 0)} ซม.`, 'dim lapl'); l2.position.copy(F.pt(sB, u(rB.rows[1].start + lap / 2), xa + 0.3, hD)); G.newLaps.add(l2);
+  }
+  return out;
+}
+
+/* ------------------------------ dimensions ------------------------------ */
+const dimMat = new THREE.LineBasicMaterial({ color: 0x8a4a2b, depthTest: false, transparent: true });
+function dimLine(a, b, tickDir, text, cls = 'dim') {
+  const g = new THREE.Group();
+  const t = tickDir.clone().multiplyScalar(0.12);
+  const pts = [a, b, a.clone().add(t), a.clone().sub(t), b.clone().add(t), b.clone().sub(t)];
+  const geo = new THREE.BufferGeometry().setFromPoints([pts[0], pts[1], pts[2], pts[3], pts[4], pts[5]]);
+  const ls = new THREE.LineSegments(geo, dimMat); ls.renderOrder = 20; g.add(ls);
+  const l = label(text, cls); l.position.copy(a).add(b).multiplyScalar(0.5); g.add(l);
+  return g;
+}
+function buildDims(F, out) {
+  const W = F.W, D = G.dims;
+  const off = W / 2 + 0.55;
+  ['A', 'B', 'C'].forEach(k => {
+    const s = F.S[k];
+    D.add(dimLine(F.pt(s, s.u0, off, 0.3), F.pt(s, s.u1, off, 0.3), s.n, `${fm(s.u1 - s.u0)} ม.`, 'dim acc'));
+    const mid = F.pt(s, (s.u0 + s.u1) / 2, -W / 2 - 0.2, 0.9);
+    const L = s.u1 - s.u0;
+    const l = label(`${k} · ${SEC_NAMES[k]}<span>${fm(L)} × ${fm(W)} ม.</span>`, 'seclabel', true);
+    l.position.copy(mid); D.add(l);
+  });
+  // widths at both eaves
+  const a1 = F.pt(F.S.A, P.lenA + 0.45, -W / 2, 0), a2 = F.pt(F.S.A, P.lenA + 0.45, W / 2, 0);
+  D.add(dimLine(a1, a2, new V3(0, 0, 1), `กว้าง ${fm(W)} ม.`));
+  const c1 = F.pt(F.S.C, P.lenB + P.lenC + 0.45, -W / 2, 0), c2 = F.pt(F.S.C, P.lenB + P.lenC + 0.45, W / 2, 0);
+  D.add(dimLine(c1, c2, new V3(0, 0, 1), `กว้าง ${fm(W)} ม.`));
+  // ridge height and pitch
+  const rx = -W / 2 - 0.9;
+  D.add(dimLine(new V3(rx, 0, F.ridgeZ), new V3(rx, F.ridgeY, F.ridgeZ), new V3(0, 0, 1), `อกไก่ ${fm(F.ridgeY)} ม.`));
+  const pl = label(`${fm(P.pitchF, 1)}°  /  ${fm(P.pitch, 1)}°`, 'dim'); pl.position.set(W / 2 + 0.2, F.ridgeY + 0.55, F.ridgeZ); D.add(pl);
+}
+
+/* ------------------------------ panels ------------------------------ */
+function sectionsHTML(F) {
+  const rows = ['A', 'B', 'C'].map(k => {
+    const s = F.S[k], L = s.u1 - s.u0, a = k === 'A' ? F.aF : F.aB;
+    return `<tr><td class="name"><span class="key">${k}</span>${SEC_NAMES[k]}</td><td>${fm(L)}</td><td>${fm(F.W)}</td><td>${fm(L * Math.cos(a))}</td><td>${fm(L * Math.sin(a))}</td><td>${fm(L * F.W)}</td></tr>`;
+  }).join('');
+  const Ltot = P.lenA + P.lenB + P.lenC;
+  return `
+  <h2>ส่วนของหลังคา</h2>
+  <p class="lead">หลังคาจั่วหลังเดียว อกไก่ขนานกับคลอง ความยาวทั้งหมดวัดตามแนวลาด ส่วนพื้นที่คือพื้นผิวลาดจริง</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>ส่วน</th><th>ลาด ม.</th><th>กว้าง ม.</th><th>แนวราบ ม.</th><th>สูง ม.</th><th>พื้นที่ ตร.ม.</th></tr></thead>
+    <tbody>${rows}
+    <tr class="total"><td class="name">รวม</td><td>${fm(Ltot)}</td><td>${fm(F.W)}</td><td>${fm(P.lenA * Math.cos(F.aF) + (P.lenB + P.lenC) * Math.cos(F.aB))}</td><td></td><td>${fm(Ltot * F.W)}</td></tr></tbody>
+  </table></div>
+  <h3>ความสูงสำคัญ (วัดจากพื้นชั้นล่าง)</h3>
+  <div class="kv">
+    <span>อกไก่</span><span>${fm(F.ridgeY)} ม.</span>
+    <span>ชายคาหน้า (ฝั่งคลอง)</span><span>${fm(F.frontEaveY)} ม.</span>
+    <span>ชายคาหลัง</span><span>${fm(F.backEaveY)} ม.</span>
+    <span>ชายคายื่นเลยผนังหน้า</span><span>${fm(F.frontEaveZ - FRONT_WALL)} ม.</span>
+    <span>ชายคายื่นเลยผนังหลัง</span><span>${fm(BACK_WALL - F.backEaveZ)} ม.</span>
+    <span>อกไก่ห่างจากชายคาหน้า</span><span>${fm(F.frontEaveZ - F.ridgeZ)} ม.</span>
+  </div>
+  <h3>ที่มาของตัวเลข</h3>
+  <div class="kv">
+    <span>ความยาวแต่ละส่วน ความกว้าง</span><span><span class="chip you">คุณวัดเอง</span></span>
+    <span>ความชันด้านหลัง ${fm(P.pitch, 1)}°</span><span><span class="chip scan">สแกน 3 มิติ</span></span>
+    <span>ความชันด้านหน้า ${fm(P.pitchF, 1)}°</span><span><span class="chip">สมมติเท่าด้านหลัง</span></span>
+    <span>ตำแหน่งอกไก่</span><span><span class="chip">คำนวณ</span></span>
+    <span>ผนัง พื้น ฝ้า</span><span><span class="chip scan">สแกน 3 มิติ</span></span>
+  </div>
+  ${(F.frontEaveZ - FRONT_WALL) < 0.1 ? `<div class="note">ด้วยความยาวชุดนี้ ชายคาหน้าจะ${F.frontEaveZ < FRONT_WALL ? 'สั้นกว่า' : 'ยื่นเลย'}ผนังหน้า ${fm(Math.abs(F.frontEaveZ - FRONT_WALL))} ม. ควรวัดความยาวด้านหน้าที่หน้างานอีกครั้ง</div>` : ''}
+  <p class="hint" style="margin-top:10px">ความสูงวัดถึงใต้แผ่นหลังคา อกไก่และหลังคาด้านหน้าอยู่เหนือฝ้าเรียบของห้องชั้นบนด้านหน้า สแกนจึงมองไม่เห็นส่วนนี้</p>`;
+}
+// To-scale plan of one section, looking straight at the slope: eave at the bottom.
+function planSVG(k, F) {
+  const o = stats[k], W = F.W, L = o.L, s = F.S[k];
+  const lap = P.stockL - P.effL, sideLap = P.sheetW - P.effW, cJoin = Math.min(stats.C.rows.excess, lap);
+  const top = Math.max(L, o.rows.coverage - o.rows.trim);
+  const ppm = 60, ml = 40, mr = 50, mt = 24, mb = 44;
+  const w = ml + W * ppm + mr, h = mt + top * ppm + mb;
+  const X = x => +(ml + (x + W / 2) * ppm).toFixed(1), Y = d => +(mt + (top - d) * ppm).toFixed(1);
+  const ink = sheetLight() ? '#2b2520' : '#ffffff';
+  const cells = [];
+  o.rows.rows.forEach((r, ri) => o.cols.cols.forEach((c, ci) => cells.push({ r, ri, c, ci, n: ri * o.cols.n + ci + 1 })));
+  cells.sort((a, b) => a.ci - b.ci || a.ri - b.ri);   // laying order: later sheets drawn on top
+  let g = '';
+  cells.forEach(({ r, c }) => { g += `<rect class="sh" x="${X(c.x0)}" y="${Y(r.start + r.len)}" width="${(c.w * ppm).toFixed(1)}" height="${(r.len * ppm).toFixed(1)}" fill="${roof.hex}"/>`; });
+  cells.forEach(({ r, ri, c, ci }) => {
+    if (ci > 0) g += `<rect class="lapz" x="${X(c.x0)}" y="${Y(r.start + r.len)}" width="${(sideLap * ppm).toFixed(1)}" height="${(r.len * ppm).toFixed(1)}"/>`;
+    const el = ri > 0 ? lap : (k === 'B' ? cJoin : 0);
+    if (el > 1e-6) g += `<rect class="lapz" x="${X(c.x0)}" y="${Y(r.start + el)}" width="${(c.w * ppm).toFixed(1)}" height="${(el * ppm).toFixed(1)}"/>`;
+  });
+  o.purl.forEach(u => { const y = Y(s.u1 - u); g += `<line class="purlin" x1="${X(-W / 2) - 6}" x2="${X(W / 2) + 6}" y1="${y}" y2="${y}"/>`; });
+  if (top > L + 1e-6) g += `<line class="edge" x1="${X(-W / 2) - 10}" x2="${X(W / 2) + 10}" y1="${Y(L)}" y2="${Y(L)}"/><text x="${X(-W / 2)}" y="${mt - 8}">สอดใต้ส่วน B ${fm((top - L) * 100, 0)} ซม.</text>`;
+  cells.forEach(({ r, c, n }) => {
+    const cx = X(c.x0 + Math.min(c.w, P.effW) / 2), cy = Y(r.start + r.len / 2);
+    const cut = r.len < o.sheetLen - 1e-6;
+    g += `<text x="${cx}" y="${cy + (cut ? -2 : 3)}" text-anchor="middle" style="fill:${ink}">${k}${n}</text>`;
+    if (cut) g += `<text x="${cx}" y="${cy + 9}" text-anchor="middle" style="fill:${ink}">${fm(r.len)}</text>`;
+  });
+  // width dimensions: one tick per sheet edge, then the total
+  const yb = Y(0) + 14, yb2 = Y(0) + 32;
+  const xs = o.cols.cols.map(c => c.x0).concat([o.cols.cols[o.cols.n - 1].x0 + o.cols.cols[o.cols.n - 1].w]);
+  g += `<line class="dl" x1="${X(xs[0])}" x2="${X(xs[xs.length - 1])}" y1="${yb}" y2="${yb}"/>`;
+  xs.forEach((x, i) => {
+    g += `<line class="dl" x1="${X(x)}" x2="${X(x)}" y1="${yb - 4}" y2="${yb + 4}"/>`;
+    if (i < xs.length - 1) g += `<text x="${(X(x) + X(xs[i + 1])) / 2}" y="${yb - 3}" text-anchor="middle">${fm((xs[i + 1] - x) * 100, 0)}</text>`;
+  });
+  g += `<text class="acc" x="${X(0)}" y="${yb2}" text-anchor="middle">กว้าง ${fm(W)} ม.</text>`;
+  // length dimensions on the right: cover per row, last row's real length
+  const xr = X(W / 2) + 14;
+  const ds = o.rows.rows.map(r => r.start).concat([o.rows.rows[o.rows.n - 1].start + o.rows.rows[o.rows.n - 1].len]);
+  g += `<line class="dl" x1="${xr}" x2="${xr}" y1="${Y(ds[0])}" y2="${Y(ds[ds.length - 1])}"/>`;
+  ds.forEach((d, i) => {
+    g += `<line class="dl" x1="${xr - 4}" x2="${xr + 4}" y1="${Y(d)}" y2="${Y(d)}"/>`;
+    if (i < ds.length - 1) g += `<text x="${xr + 6}" y="${(Y(d) + Y(ds[i + 1])) / 2 + 3}">${fm(ds[i + 1] - d)}</text>`;
+  });
+  // section length on the left
+  const xlft = ml - 16;
+  g += `<line class="dl" x1="${xlft}" x2="${xlft}" y1="${Y(0)}" y2="${Y(L)}"/><line class="dl" x1="${xlft - 4}" x2="${xlft + 4}" y1="${Y(0)}" y2="${Y(0)}"/><line class="dl" x1="${xlft - 4}" x2="${xlft + 4}" y1="${Y(L)}" y2="${Y(L)}"/>`;
+  g += `<text class="acc" transform="translate(${xlft - 5} ${(Y(0) + Y(L)) / 2}) rotate(-90)" text-anchor="middle">${fm(L)} ม. ตามแนวลาด</text>`;
+  g += `<text x="${X(-W / 2)}" y="${yb2}" style="fill:var(--muted)">${k === 'B' ? 'ต่อกับ C' : 'ชายคา'}</text>`;
+  if (k !== 'C') g += `<text x="${X(-W / 2)}" y="${mt - 8}" style="fill:var(--muted)">อกไก่</text>`;
+  return `<svg class="plan" viewBox="0 0 ${w.toFixed(0)} ${h.toFixed(0)}" role="img" aria-label="ผังแผ่นหลังคาส่วน ${k}">${g}</svg>`;
+}
+function purlinText(k) {
+  const s = F.S[k], ds = stats[k].purl.map(u => s.u1 - u).sort((a, b) => a - b);
+  const gaps = ds.slice(1).map((d, i) => d - ds[i]);
+  const mx = Math.max(...gaps), mn = Math.min(...gaps);
+  return `${ds.length} แนว ห่าง ${Math.abs(mx - mn) < 0.01 ? fm(mx) + ' ม.' : fm(mn) + '–' + fm(mx) + ' ม.'} มีแปรองใต้รอยทับหัวท้ายทุกจุด`;
+}
+function sheetsHTML(F) {
+  const lap = P.stockL - P.effL;
+  let totSheets = 0, totOrder = 0, totM = 0, totScrews = 0;
+  const cards = ['A', 'B', 'C'].map(k => {
+    const o = stats[k], order = o.sheets + P.spares, lm = order * o.sheetLen;
+    totSheets += o.sheets; totOrder += order; totM += lm; totScrews += o.screws;
+    const cut = o.rows.trim > 1e-6 ? `แถวบนสุดตัดเหลือ <b>${fm(o.sheetLen - o.rows.trim)} ม.</b>` : (o.rows.excess > 1e-6 ? `แถวบนสุดสอดใต้ส่วน B ${fm(o.rows.excess * 100, 0)} ซม.` : 'ไม่ต้องตัดตามแนวลาด');
+    const colcut = o.cols.cut > 1e-6 ? ` แถวสุดท้ายตัดกว้างเหลือ ${fm(P.sheetW - o.cols.cut)} ม.` : '';
+    const q = QUOTE[k];
+    let qchip = '';
+    if (q) qchip = (q.n === order && Math.abs(q.len - o.sheetLen) < 1e-6) ? `<span class="chip ok">ตรงกับใบเสนอราคา ${q.n} × ${fm(q.len)} ม.</span>` : `<span class="chip warn">ใบเสนอราคา: ${q.n} × ${fm(q.len)} ม.</span>`;
+    else qchip = `<span class="chip warn">ไม่มีในใบเสนอราคา</span>`;
+    const across = `ตามขวาง   ${o.cols.n} แผ่น: ${fm(P.sheetW)} + ${o.cols.n - 1} × ${fm(P.effW)} = ${fm(o.cols.coverage)} ม.`;
+    const up = o.rows.n === 1 ? `ตามลาด    1 แผ่น ยาว ${fm(o.sheetLen)} ม. ไม่มีรอยทับหัวท้าย` :
+      `ตามลาด    ${o.rows.n} แถว: ${fm(o.sheetLen)} + ${o.rows.n - 1} × ${fm(o.rows.eff)} = ${fm(o.rows.coverage)} ม.`;
+    let alt = '';
+    if (k === 'A' && Math.abs(o.sheetLen - P.stockL) > 1e-6) {
+      const two = P.stockL + P.effL, a = layoutRows(o.L, P.stockL, lap, false);
+      if (two < o.L) alt = `<div class="note">ถ้าใช้แผ่น ${fm(P.stockL)} ม. แทนในส่วนนี้ 2 แถวจะคลุมได้แค่ ${fm(two)} ม. ขาดไป ${fm((o.L - two) * 100, 0)} ซม. จาก ${fm(o.L)} ม. ต้องเพิ่มแถวที่สามตัดเหลือ ${fm(a.rows[a.n - 1].len)} ม. (รวม ${a.n * o.cols.n} แผ่น) หรือลดชายคาลง ${fm((o.L - two) * 100, 0)} ซม. แผ่น ${fm(o.sheetLen)} ม. ตามใบเสนอราคาไม่ต้องมีรอยทับหัวท้ายเลยในด้านนี้</div>`;
+    }
+    return `<div class="card">
+      <div class="row"><div><span class="key">${k}</span><b>${SEC_NAMES[k]}</b> · ${fm(o.L)} × ${fm(F.W)} ม.</div><div class="big">${o.sheets}<span class="sub"> + ${P.spares}</span></div></div>
+      <div class="sub">ตามขวาง ${o.cols.n} แผ่น × ${o.rows.n} แถว แผ่นยาว ${fm(o.sheetLen)} ม. · ${cut}${colcut}</div>
+      <div class="tbl-wrap">${planSVG(k, F)}</div>
+      <div class="formula">${across}\n${up}\nแป       ${purlinText(k)}</div>
+      ${alt}
+      <div class="row" style="margin-top:8px"><span class="sub">สั่ง ${order} × ${fm(o.sheetLen)} ม. = ${fm(lm)} ม. · ≈ ${thb(lm * P.price)} บาท</span>${qchip}</div>
+    </div>`;
+  }).join('');
+  const marg = stats.A.cols.margin;
+  const warn = marg < 0.05 ? `<div class="note">${stats.A.cols.n} แผ่นตามขวางคลุมได้ ${fm(stats.A.cols.coverage)} ม. สำหรับหลังคากว้าง ${fm(F.W)} ม. เหลือเผื่อ ${fm(marg * 100, 0)} ซม. ควรวัดความกว้างจริงที่หน้างาน ถ้าเกิน ${fm(F.W)} ม. แม้เพียงเล็กน้อย ให้ใช้ครอบข้างปิดช่อง หรือเพิ่มแผ่นตัดอีกหนึ่งแถว</div>` : '';
+  return `
+  <h2>ผังการมุงและรายการตัดแผ่น</h2>
+  <p class="lead">แผ่นขนาด ${fm(P.sheetW * 100, 0)} × ${fm(P.stockL * 100, 0)} ซม. เมื่อมุงแล้วคลุมได้ ${fm(P.effW * 100, 0)} × ${fm(P.effL * 100, 0)} ซม. เพราะทับแผ่นข้างเคียง ${fm((P.sheetW - P.effW) * 100, 0)} ซม. ด้านข้าง (หนึ่งลอน) และ ${fm(lap * 100, 0)} ซม. ด้านหัวท้าย มุงทีละแถวตั้งจากชายคาขึ้นไปถึงอกไก่ แล้วเริ่มแถวถัดไปโดยทับลอนสุดท้ายของแถวก่อนหน้า หมายเลขแผ่นนับจากชายคา (แถวที่ 1) ไปตามขวาง</p>
+  <div class="legend"><span><i style="background:${roof.hex}"></i>แผ่นหลังคา</span><span><i style="background:var(--lap)"></i>ส่วนทับซ้อน (สองชั้น)</span><span><i style="border-top:2px dashed var(--muted);height:0;margin-bottom:3px"></i>แปใต้แผ่น</span></div>
+  ${cards}
+  ${warn}
+  <h3>สรุปรวม</h3>
+  <div class="kv">
+    <span>แผ่นบนหลังคา</span><span>${totSheets}</span>
+    <span>แผ่นที่ต้องสั่ง (รวมสำรองส่วนละ ${P.spares} แผ่น)</span><span>${totOrder}</span>
+    <span>ความยาวแผ่นที่ต้องสั่ง</span><span>${fm(totM)} ม.</span>
+    <span>ค่าแผ่นหลังคา (${thb(P.price)} บาท/ม.)</span><span>≈ ${thb(totM * P.price)} บาท</span>
+    <span>สกรูยึดหลังคา (ลอนที่ 1, 3, 5 ทุกแป)</span><span>≈ ${totScrews}</span>
+  </div>
+  <p class="hint" style="margin-top:10px">เฉพาะค่าแผ่นหลังคา แท็บ <b>ราคา</b> รวมครอบและสกรูจากใบเสนอราคาด้วย</p>`;
+}
+// Lines of the supplier quote (names and prices as written; customer details left out).
+const QUOTE_LINES = [
+  ['แผ่นหลังคา + PU 1" (ท้องสีเงิน) ยาว 1.60 ม. × 20 แผ่น', 32.0, 'ม.', 235],
+  ['แผ่นหลังคา + PU 1" (ท้องสีเงิน) ยาว 3.15 ม. × 8 แผ่น', 25.2, 'ม.', 235],
+  ['แผ่นครอบ G765 ยาว 4.50 ม. × 4 แผ่น', 18, 'ม.', 100],
+  ['แผ่นครอบ G205 ยาว 4.50 ม. × 4 แผ่น', 18, 'ม.', 70],
+  ['แผ่นครอบ G914 ยาว 4.50 ม. × 4 แผ่น', 18, 'ม.', 100],
+  ['แผ่นครอบ G370 ยาว 4.50 ม. × 4 แผ่น', 18, 'ม.', 75],
+  ['แผ่นครอบ G360 ยาว 3.10 ม. × 2 แผ่น', 6.2, 'ม.', 75],
+  ['สกรูยาว 75 มม. หัวสีน้ำตาล', 200, 'ตัว', 4.8],
+  ['สกรูสั้น 20 มม. หัวสีน้ำตาล', 200, 'ตัว', 1.8],
+];
+const QUOTE_LONG_SCREWS = 200, LONG_SCREW_PRICE = 4.8;
+function costHTML() {
+  const qSum = QUOTE_LINES.reduce((a, l) => a + l[1] * l[3], 0);
+  const add = [];
+  ['A', 'B', 'C'].forEach(k => {
+    const o = stats[k], order = o.sheets + P.spares, m = order * o.sheetLen, q = QUOTE[k], qm = q ? q.n * q.len : 0;
+    if (m - qm > 1e-6) add.push([`แผ่นส่วน ${k} · ${SEC_NAMES[k]}: ${order} × ${fm(o.sheetLen)} ม.${qm ? ` (ใบเสนอราคามี ${fm(qm)} ม.)` : ''}`, `${fm(m - qm)} ม.`, (m - qm) * P.price]);
+  });
+  const screws = ['A', 'B', 'C'].reduce((a, k) => a + stats[k].screws, 0), need = Math.ceil(screws * 1.05);
+  if (need > QUOTE_LONG_SCREWS) add.push([`สกรูยึดหลังคา 75 มม.: ต้องใช้ ${need} ตัว (${screws} + 5 %) ใบเสนอราคามี ${QUOTE_LONG_SCREWS} ตัว`, `${need - QUOTE_LONG_SCREWS} ตัว`, (need - QUOTE_LONG_SCREWS) * LONG_SCREW_PRICE]);
+  const addSum = add.reduce((a, r) => a + r[2], 0);
+  const qRows = QUOTE_LINES.map(l => `<tr><td class="name" style="white-space:normal">${l[0]}</td><td>${l[1] % 1 ? fm(l[1], 1) : l[1]} ${l[2]}</td><td>${l[3] % 1 ? fm(l[3], 2) : thb(l[3])}</td><td>${thb(l[1] * l[3])}</td></tr>`).join('');
+  const aRows = add.map(r => `<tr><td class="name" style="white-space:normal">${r[0]}</td><td>${r[1]}</td><td>${thb(r[2])}</td></tr>`).join('');
+  return `
+  <h2>ประมาณราคา</h2>
+  <p class="lead">ใบเสนอราคาครอบคลุมส่วน A และ C โมเดลคำนวณส่วนที่ต้องเพิ่มสำหรับส่วนกลาง B และระยะแป</p>
+  <div class="card">
+    <div class="row"><span>ราคารวมโดยประมาณ</span><span class="big">≈ ${thb(qSum + addSum)} บาท</span></div>
+    <div class="sub">ใบเสนอราคา ${thb(qSum)} + ส่วนเพิ่ม ${thb(addSum)} ยังไม่รวมค่าแรง VAT และครอบข้างของส่วน B</div>
+  </div>
+  <h3>ใบเสนอราคา</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>รายการ</th><th>จำนวน</th><th>บาท/หน่วย</th><th>บาท</th></tr></thead>
+    <tbody>${qRows}<tr class="total"><td class="name">รวมทุกรายการ</td><td></td><td></td><td>${thb(qSum)}</td></tr></tbody>
+  </table></div>
+  <p class="hint" style="margin-top:6px">ในภาพใบเสนอราคาไม่มีบรรทัดยอดรวม VAT หรือค่าแรง ตัวเลขนี้จึงเป็นผลรวมของทั้ง 9 รายการ</p>
+  <h3>ส่วนที่ต้องเพิ่มจากโมเดล</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>รายการ</th><th>เพิ่ม</th><th>บาท</th></tr></thead>
+    <tbody>${aRows}
+      <tr><td class="name" style="white-space:normal">ครอบข้างส่วน B 2 × ${fm(P.lenB)} ม.</td><td>${fm(2 * P.lenB)} ม.</td><td><span class="chip warn">สอบถามร้าน</span></td></tr>
+      <tr class="total"><td class="name">รวมส่วนเพิ่ม</td><td></td><td>${thb(addSum)}</td></tr></tbody>
+  </table></div>
+  <p class="hint" style="margin-top:6px">ราคาแผ่น ${thb(P.price)} บาท/ม. ตามใบเสนอราคา (แก้ได้ในแท็บตั้งค่า) สกรู: ยิงที่ลอน 1, 3 และ 5 ของทุกแผ่นบนทุกแป (ตรงรอยทับซ้อนใช้สกรูตัวเดียวยึดสองแผ่น) เผื่อเพิ่ม 5 % ส่วนสกรู 20 มม. ในใบเสนอราคาใช้กับแผ่นครอบ ไม่ได้นับรวมตรงนี้</p>`;
+}
+function compareHTML(oldCount) {
+  return `
+  <h2>หลังคาเดิมเทียบกับใหม่</h2>
+  <p class="lead">รูปทรงและความชันหลังคาเหมือนเดิม เปลี่ยนเฉพาะวัสดุมุง</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th></th><th style="color:var(--steel)">เดิม</th><th style="color:var(--accent)">ใหม่</th></tr></thead>
+    <tbody>
+      <tr><td class="name">วัสดุ</td><td>สังกะสี (เหล็กชุบกัลวาไนซ์)</td><td>เหล็กเคลือบสี 0.40 มม.</td></tr>
+      <tr><td class="name">รูปลอน</td><td>ลอนคลื่นเล็ก</td><td>ลอนสี่เหลี่ยมคางหมู 5 ลอน</td></tr>
+      <tr><td class="name">ขนาดแผ่น</td><td>≈ 0.66 × 1.83 ม.</td><td>${fm(P.sheetW)} × ${fm(P.stockL)} ม.</td></tr>
+      <tr><td class="name">พื้นที่คลุม/แผ่น</td><td>≈ 0.60 × 1.68 ม.</td><td>${fm(P.effW)} × ${fm(P.effL)} ม.</td></tr>
+      <tr><td class="name">จำนวนแผ่นบนหลังคา</td><td>≈ ${oldCount}</td><td>${stats.A.sheets + stats.B.sheets + stats.C.sheets}</td></tr>
+      <tr><td class="name">ฉนวน</td><td>ไม่มี</td><td>โฟม PU 1" ท้องฟอยล์สีเงิน</td></tr>
+      <tr><td class="name">สี</td><td>สังกะสีเปลือย มีสนิม</td><td>${roof.name}</td></tr>
+      <tr><td class="name">การยึด</td><td>ตะปู และแผ่นปะ</td><td>สกรูยิงบนลอน</td></tr>
+      <tr><td class="name">อกไก่/ขอบ</td><td>พับแผ่นเอง</td><td>ครอบสันหลังคา ครอบข้าง</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint" style="margin-top:10px">ขนาดแผ่นเดิมเป็นค่าประมาณจากรูปถ่ายของคุณ กด <b>เทียบ</b> แล้วลากแถบเลื่อนเพื่อดูทั้งสองแบบบนหลังคาพร้อมกัน</p>`;
+}
+const FIELDS = [
+  ['sec', 'หลังคา'], ['width', 'ความกว้างหลังคา (ม.)', 0.05], ['pitch', 'มุมลาดด้านหลัง (°)', 0.1], ['pitchF', 'มุมลาดด้านหน้า (°)', 0.1],
+  ['sec', 'ความยาวแต่ละส่วนตามแนวลาด'], ['lenA', 'A · หน้า (ม.)', 0.05], ['lenB', 'B · กลาง (ม.)', 0.05], ['lenC', 'C · หลัง (ม.)', 0.05],
+  ['sec', 'แผ่นเมทัลชีท'], ['sheetW', 'ความกว้างแผ่น (ม.)', 0.01], ['effW', 'กว้างหลังหักทับซ้อน (ม.)', 0.01], ['stockL', 'ความยาวแผ่น (ม.)', 0.01], ['effL', 'ยาวหลังหักทับซ้อน (ม.)', 0.01],
+  ['purlinMax', 'ระยะแปห่างสูงสุด (ม.)', 0.05],
+  ['sec', 'ความยาวแผ่นที่ใช้ในแต่ละส่วน'], ['sheetLenA', 'A · หน้า (ม.)', 0.05], ['sheetLenB', 'B · กลาง (ม.)', 0.05], ['sheetLenC', 'C · หลัง (ม.)', 0.05],
+  ['sec', 'การสั่งซื้อ'], ['spares', 'แผ่นสำรองต่อส่วน', 1], ['price', 'ราคาต่อเมตร (บาท)', 1],
+];
+function settingsHTML() {
+  return `<h2>ตั้งค่า</h2><p class="lead">แก้ค่าใดก็ได้ แล้วโมเดล ผังการมุง และยอดรวมจะอัปเดตทันที</p>
+  <div class="form">${FIELDS.map(f => f[0] === 'sec' ? `<div class="sec">${f[1]}</div>` :
+    `<label for="in-${f[0]}">${f[1]}</label><input id="in-${f[0]}" type="number" step="${f[2]}" value="${P[f[0]]}" inputmode="decimal">`).join('')}</div>
+  <div class="btnrow" style="margin-top:14px"><button class="btn" id="btnReset">คืนค่าตามที่ฉันวัด</button></div>`;
+}
+
+/* ------------------------------ rebuild ------------------------------ */
+let oldCount = 0, F = null;
+function rebuild() {
+  ['house', 'neighbours', 'structure', 'oldRoof', 'newRoof', 'newLaps', 'newFlash', 'dims', 'numbers'].forEach(k => clearGroup(G[k]));
+  const tp = trapProfile();
+  GEO.trap.dispose(); GEO.foam.dispose(); GEO.closure.dispose();
+  GEO.trap = profileGeometry(tp, false); GEO.foam = foamGeometry(tp); GEO.closure = closureGeometry(tp);
+  F = computeFrame();
+  buildHouse(F); buildNeighbours(F); buildStructure(F);
+  oldCount = buildOldRoof(F);
+  stats = buildNewRoof(F);
+  buildDims(F, stats);
+  $('#tab-sections').innerHTML = sectionsHTML(F);
+  renderTabs();
+  const ir = $('#installRange'); ir.max = install.total; ir.value = install.total;
+  if (!$('#tab-settings').dataset.ready) { $('#tab-settings').innerHTML = settingsHTML(); $('#tab-settings').dataset.ready = '1'; bindSettings(); }
+  applyVisibility();
+}
+function renderTabs() {
+  $('#tab-sheets').innerHTML = sheetsHTML(F);
+  $('#tab-cost').innerHTML = costHTML();
+  $('#tab-compare').innerHTML = compareHTML(oldCount);
+}
+function bindSettings() {
+  FIELDS.forEach(f => {
+    if (f[0] === 'sec') return;
+    const el = $(`#in-${f[0]}`);
+    el.addEventListener('change', () => {
+      let v = parseFloat(el.value);
+      const lim = { width: [1, 12], pitch: [3, 50], pitchF: [3, 50], spares: [0, 50], price: [0, 1e6], purlinMax: [0.3, 2] }[f[0]] || [0.2, 30];
+      if (!isFinite(v)) v = DEFAULTS[f[0]];
+      v = Math.min(lim[1], Math.max(lim[0], v));
+      if (f[0] === 'effW') v = Math.min(v, P.sheetW);
+      if (f[0] === 'effL') v = Math.min(v, P.stockL);
+      if (f[0] === 'spares') v = Math.round(v);
+      el.value = v; P[f[0]] = v;
+      if (f[0] === 'stockL') { ['sheetLenB', 'sheetLenC'].forEach(k => { P[k] = v; $(`#in-${k}`).value = v; }); }
+      rebuild(); toast('อัปเดตแล้ว');
+    });
+  });
+  $('#btnReset').addEventListener('click', () => { Object.assign(P, DEFAULTS); FIELDS.forEach(f => { if (f[0] !== 'sec') $(`#in-${f[0]}`).value = P[f[0]]; }); rebuild(); toast('คืนค่าตามที่คุณวัดแล้ว'); });
+}
+
+/* ------------------------------ state, visibility, clipping ------------------------------ */
+const state = { mode: 'new', split: 0, measuring: false };
+const layer = id => $(`#${id}`).checked;
+const cutPlane = new THREE.Plane(new V3(-1, 0, 0), 0.0);
+const oldPlane = new THREE.Plane(new V3(-1, 0, 0), 0);
+const newPlane = new THREE.Plane(new V3(1, 0, 0), 0);
+let divider = null;
+function applyVisibility() {
+  const m = state.mode;
+  G.house.visible = layer('lyWalls');
+  G.neighbours.visible = layer('lyNeighbours');
+  G.neighbours.children.forEach(n => { n.visible = !(layer('lyCut') && n.userData.side > 0); });
+  G.structure.visible = layer('lyStructure');
+  G.oldRoof.visible = m === 'old' || m === 'compare';
+  G.newRoof.visible = m !== 'old';
+  G.newLaps.visible = m !== 'old' && layer('lyLaps');
+  G.newFlash.visible = m !== 'old' && layer('lyFlash');
+  G.dims.visible = layer('lyDims');
+  G.numbers.visible = m !== 'old' && (layer('lyNumbers') || m === 'install');
+  if (scanMesh) scanMesh.visible = layer('lyScan');
+  $('#compareBar').hidden = m !== 'compare';
+  $('#installBar').hidden = m !== 'install';
+  setInstallStep(m === 'install' ? +$('#installRange').value : install.total);
+  if (!divider) {
+    divider = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), M.divider);
+    divider.rotation.y = Math.PI / 2; root.add(divider);
+  }
+  divider.visible = m === 'compare';
+  if (F) { divider.scale.set(F.frontEaveZ - F.backEaveZ + 1, F.ridgeY - F.backEaveY + 1.4, 1); divider.position.set(state.split, (F.ridgeY + F.backEaveY) / 2 + 0.3, (F.frontEaveZ + F.backEaveZ) / 2); }
+  updateClipping();
+  invalidate();
+}
+// Show only the first n sheets in laying order, with their laps, screws and numbers.
+function setInstallStep(n) {
+  const I = install, all = n >= I.total;
+  I.sheetMesh.count = n; I.foamMesh.count = n;
+  I.screwMesh.count = I.washerMesh.count = I.cum.screws[n]; I.lapMesh.count = I.cum.laps[n];
+  I.edgeLines.geometry.setDrawRange(0, n * 8);
+  I.flashMesh.visible = all;
+  I.labels.forEach((l, i) => { l.visible = i < n; });
+  install.callouts = all;
+  const t = $('#installText');
+  if (all) t.textContent = `มุงครบ ${I.total} แผ่น · ติดครอบและครอบสันหลังคาเป็นขั้นตอนสุดท้าย`;
+  else if (n === 0) t.textContent = 'แปพร้อมแล้ว · แผ่นแรกเริ่มที่ชายคาด้านหลัง';
+  else { const s = I.seq[n - 1]; t.textContent = `มุงแล้ว ${n} / ${I.total} · ล่าสุด: ${s.id} (ส่วน ${s.k} แถวตั้ง ${s.col} แถวที่ ${s.row})`; }
+  invalidate();
+}
+function updateClipping() {
+  const cut = layer('lyCut') ? [cutPlane] : [];
+  oldPlane.constant = state.split; newPlane.constant = -state.split;
+  const cmp = state.mode === 'compare';
+  HOUSE_MATS.forEach(m => { m.clippingPlanes = cut; });
+  OLD_MATS.forEach(m => { m.clippingPlanes = cmp ? [...cut, oldPlane] : cut; });
+  NEW_MATS.forEach(m => { m.clippingPlanes = cmp ? [...cut, newPlane] : cut; });
+  if (scanMesh) scanMesh.material.clippingPlanes = cut;
+}
+
+/* ------------------------------ scan ------------------------------ */
+let scanLoading = false;
+async function loadScan() {
+  if (scanMesh || scanLoading) return;
+  scanLoading = true;
+  const st = $('#scanState');
+  try {
+    const res = await fetch('scan/scan.bin');
+    if (!res.ok) throw new Error('missing');
+    const total = +res.headers.get('content-length') || 17088932;
+    const reader = res.body.getReader(); const chunks = []; let got = 0;
+    for (;;) { const { done, value } = await reader.read(); if (done) break; chunks.push(value); got += value.length; st.textContent = `${Math.round(got / total * 100)}%`; }
+    const buf = new Uint8Array(got); let o = 0; chunks.forEach(c => { buf.set(c, o); o += c.length; });
+    const dv = new DataView(buf.buffer);
+    const nV = dv.getUint32(0, true), nF = dv.getUint32(4, true);
+    const lo = [8, 12, 16].map(i => dv.getFloat32(i, true)), hi = [20, 24, 28].map(i => dv.getFloat32(i, true));
+    const pos = new Uint16Array(buf.buffer, 40, nV * 3);
+    const uv = new Uint16Array(buf.buffer, 40 + nV * 6, nV * 2);
+    let io = 40 + nV * 10; io += (4 - io % 4) % 4;
+    const idx = new Uint32Array(buf.buffer, io, nF * 3);
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3, true));
+    g.setAttribute('uv', new THREE.BufferAttribute(uv, 2, true));
+    g.setIndex(new THREE.BufferAttribute(idx, 1));
+    const map = await new THREE.TextureLoader().loadAsync('scan/scan_tex.jpg');
+    map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 8;
+    scanMesh = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ map, side: THREE.DoubleSide }));
+    scanMesh.name = 'LiDAR scan';
+    scanMesh.scale.set(hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]);
+    scanMesh.position.set(lo[0], lo[1], lo[2]);
+    scanMesh.frustumCulled = false;
+    root.add(scanMesh);
+    st.textContent = `${(nF / 1e6).toFixed(2)} ล้านสามเหลี่ยม`;
+    toast('โหลดสแกน 3 มิติแล้ว ซ่อนผนังหรือผ่าดูกลางบ้านเพื่อดูข้างใน');
+    applyVisibility();
+  } catch (e) {
+    $('#lyScan').checked = false; $('#lyScan').disabled = true;
+    st.textContent = 'เฉพาะในเครื่อง';
+    toast('สแกน 3 มิติมีเฉพาะในไฟล์บนคอมพิวเตอร์ของคุณ (start.bat)');
+  } finally { scanLoading = false; }
+}
+
+/* ------------------------------ camera views ------------------------------ */
+const VIEWS = {
+  iso: [new V3(16, 21, 12.5), new V3(0, 5.0, 1.5)],
+  top: [new V3(0.01, 34, 2.6), new V3(0, 3, 2.6)],
+  front: [new V3(2.5, 6.5, 30), new V3(0, 4.2, 2.6)],
+  back: [new V3(-4, 10, -24), new V3(0, 3.6, 0)],
+  side: [new V3(26, 5.0, 2.6), new V3(0, 3.8, 2.6)],
+  laps: [new V3(4.0, 8.2, -0.2), new V3(1.3, 6.3, 2.0)],
+};
+let tween = null;
+function goView(name) {
+  const [p, t] = VIEWS[name];
+  const narrow = innerWidth < 820 ? 1.75 : 1;
+  const tp = t.clone().add(p.clone().sub(t).multiplyScalar(narrow));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) { camera.position.copy(tp); controls.target.copy(t); return; }
+  tween = { p0: camera.position.clone(), t0: controls.target.clone(), p1: tp, t1: t.clone(), s: performance.now() };
+}
+
+/* ------------------------------ interaction ------------------------------ */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+function setNdc(e) { const r = renderer.domElement.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1); }
+function visibleDeep(o) { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; }
+const tip = $('#tip');
+let hoverQueued = false;
+renderer.domElement.addEventListener('pointermove', e => {
+  if (hoverQueued || state.measuring || e.buttons) { tip.hidden = true; return; }
+  hoverQueued = true;
+  requestAnimationFrame(() => {
+    hoverQueued = false;
+    if (!newSheetMesh || !visibleDeep(newSheetMesh)) { tip.hidden = true; return; }
+    setNdc(e); ray.setFromCamera(ndc, camera);
+    const hit = ray.intersectObject(newSheetMesh, false).find(h => state.mode !== 'compare' || h.point.x >= state.split);
+    if (!hit) { tip.hidden = true; return; }
+    const s = newSheetInfo[hit.instanceId];
+    tip.innerHTML = `<b>${s.id}</b> · ส่วน ${s.k} แถวที่ ${s.row} แถวตั้ง ${s.col}<br>${fm(s.len)} ม. × ${fm(s.w)} ม.${s.cut ? ' · <span style="color:var(--warn)">ตัดแผ่น</span>' : ''}`;
+    tip.hidden = false;
+    const r = $('#app').getBoundingClientRect();
+    tip.style.left = Math.min(e.clientX - r.left + 14, r.width - tip.offsetWidth - 8) + 'px';
+    tip.style.top = (e.clientY - r.top + 14) + 'px';
+  });
+});
+renderer.domElement.addEventListener('pointerleave', () => { tip.hidden = true; });
+
+// measuring: click two points
+let mPts = [], downAt = null;
+renderer.domElement.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener('pointerup', e => {
+  if (!state.measuring || !downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 5) return;
+  setNdc(e); ray.setFromCamera(ndc, camera);
+  const targets = []; root.traverse(o => { if ((o.isMesh) && o !== divider && visibleDeep(o)) targets.push(o); });
+  const hit = ray.intersectObjects(targets, false)[0];
+  if (!hit) return;
+  if (mPts.length === 2) { clearGroup(G.measure); mPts = []; }
+  mPts.push(hit.point.clone());
+  const dot = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 8), new THREE.MeshBasicMaterial({ color: 0x1d6fb8, depthTest: false }));
+  dot.renderOrder = 30; dot.position.copy(hit.point); G.measure.add(dot);
+  if (mPts.length === 2) {
+    const [a, b] = mPts;
+    const ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints([a, b]), new THREE.LineBasicMaterial({ color: 0x1d6fb8, depthTest: false }));
+    ln.renderOrder = 30; G.measure.add(ln);
+    const l = label(`${fm(a.distanceTo(b), 3)} ม.  ·  ต่างระดับ ${fm(Math.abs(a.y - b.y), 2)} ม.`, 'measure');
+    l.position.copy(a).add(b).multiplyScalar(0.5); G.measure.add(l);
+  }
+  invalidate();
+});
+
+/* ------------------------------ UI wiring ------------------------------ */
+let toastT = 0;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 3200); }
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+  state.mode = b.dataset.mode;
+  document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  applyVisibility();
+}));
+['lyLaps', 'lyWalls', 'lyNeighbours', 'lyStructure', 'lyFlash', 'lyDims', 'lyNumbers', 'lyCut'].forEach(id => $(`#${id}`).addEventListener('change', () => {
+  if (id === 'lyCut' && layer('lyCut')) goView('side');
+  applyVisibility();
+}));
+$('#lyScan').addEventListener('change', () => { if (layer('lyScan')) loadScan(); applyVisibility(); });
+document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => goView(b.dataset.view)));
+$('#splitRange').addEventListener('input', e => { state.split = parseFloat(e.target.value); applyVisibility(); });
+let playT = 0;
+function stopPlay() { clearInterval(playT); playT = 0; $('#btnPlay').textContent = 'เล่น'; }
+$('#installRange').addEventListener('input', e => { stopPlay(); setInstallStep(+e.target.value); });
+$('#btnPlay').addEventListener('click', () => {
+  if (playT) { stopPlay(); return; }
+  const r = $('#installRange');
+  if (+r.value >= install.total) r.value = 0;
+  $('#btnPlay').textContent = 'หยุด';
+  setInstallStep(+r.value);
+  playT = setInterval(() => {
+    r.value = Math.min(install.total, +r.value + 1); setInstallStep(+r.value);
+    if (+r.value >= install.total) stopPlay();
+  }, 380);
+});
+// roof colour swatches; black and near-black are refused
+function setRoofColor(hex, name) {
+  if (tooDark(hex)) { toast('ไม่อนุญาตให้ใช้สีดำกับหลังคา กรุณาเลือกสีที่อ่อนกว่านี้'); return false; }
+  roof.hex = hex; roof.name = name;
+  try { localStorage.setItem('roofColor', JSON.stringify(roof)); } catch (e) {}
+  applyRoofColor(); syncSwatches(); renderTabs(); invalidate();
+  return true;
+}
+function syncSwatches() {
+  document.querySelectorAll('#swatches .swatch').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.hex === roof.hex || (b.classList.contains('custom') && !COLORS.some(c => c[1] === roof.hex)))));
+  $('#colorName').textContent = roof.name + (roof.hex === COLORS[0][1] ? ' (ตามใบเสนอราคา)' : '');
+}
+$('#swatches').innerHTML = COLORS.map(([n, h]) => `<button class="swatch" data-hex="${h}" data-name="${n}" style="background:${h}" title="${n}" aria-label="${n}" aria-pressed="false"></button>`).join('')
+  + `<label class="swatch custom" title="สีอื่น"><input type="color" id="customColor" value="${roof.hex}" aria-label="สีอื่น"></label>`;
+document.querySelectorAll('#swatches button.swatch').forEach(b => b.addEventListener('click', () => setRoofColor(b.dataset.hex, b.dataset.name)));
+$('#customColor').addEventListener('change', e => { if (!setRoofColor(e.target.value, `สีกำหนดเอง ${e.target.value.toUpperCase()}`)) e.target.value = roof.hex; });
+syncSwatches();
+document.querySelectorAll('.tabs [role="tab"]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tabs [role="tab"]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+  ['sections', 'sheets', 'cost', 'compare', 'settings'].forEach(t => { $(`#tab-${t}`).hidden = t !== b.dataset.tab; });
+  $('#right').classList.remove('collapsed'); $('#rightToggle').textContent = 'ซ่อน';
+}));
+$('#rightToggle').addEventListener('click', () => { const c = $('#right').classList.toggle('collapsed'); $('#rightToggle').textContent = c ? 'แสดง' : 'ซ่อน'; $('#rightToggle').setAttribute('aria-expanded', String(!c)); });
+$('#leftToggle').addEventListener('click', () => { const c = $('#left').classList.toggle('collapsed'); $('#leftToggle').setAttribute('aria-expanded', String(!c)); });
+if (innerWidth < 820) { $('#left').classList.add('collapsed'); }
+$('#btnMeasure').addEventListener('click', () => {
+  state.measuring = !state.measuring;
+  $('#btnMeasure').setAttribute('aria-pressed', String(state.measuring));
+  $('#toolHint').textContent = state.measuring ? 'คลิกสองจุดบนโมเดลเพื่อวัดระยะ คลิกอีกครั้งเพื่อเริ่มวัดใหม่' : 'ลากเพื่อหมุน เลื่อนล้อเมาส์หรือถ่างนิ้วเพื่อซูม คลิกขวาค้างแล้วลากเพื่อเลื่อน ชี้ที่แผ่นใหม่เพื่อดูขนาด';
+  if (!state.measuring) { clearGroup(G.measure); mPts = []; invalidate(); }
+});
+if (!isLocal) { $('#btnExport').disabled = true; $('#btnExport').title = 'ส่งออกได้เฉพาะในไฟล์บนคอมพิวเตอร์ของคุณ'; }
+$('#btnExport').addEventListener('click', () => {
+  toast('กำลังส่งออก…');
+  const hidden = [G.dims, G.numbers, G.measure, divider];
+  const prev = hidden.map(o => o.visible); hidden.forEach(o => { o.visible = false; });
+  new GLTFExporter().parse(root, glb => {
+    hidden.forEach((o, i) => { o.visible = prev[i]; });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([glb], { type: 'model/gltf-binary' }));
+    a.download = `canal-house-roof-${state.mode}.glb`; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    toast('บันทึก GLB แล้ว (เฉพาะชั้นข้อมูลที่เปิดอยู่)');
+  }, err => { hidden.forEach((o, i) => { o.visible = prev[i]; }); toast('ส่งออกไม่สำเร็จ: ' + err.message); }, { binary: true, onlyVisible: true });
+});
+
+// theme-aware ground
+function syncTheme() {
+  const cs = getComputedStyle(document.documentElement);
+  M.ground.color.set(cs.getPropertyValue('--ground').trim() || '#ddd3c4');
+  dimMat.color.set(cs.getPropertyValue('--accent').trim() || '#8a4a2b');
+  invalidate();
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncTheme);
+new MutationObserver(syncTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+/* ------------------------------ start ------------------------------ */
+buildContext();
+rebuild();
+syncTheme();
+const [p0, t0] = VIEWS.iso; camera.position.copy(p0); controls.target.copy(t0);
+if (innerWidth < 820) goView('iso');
+
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h); labelRenderer.setSize(w, h);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+  invalidate();
+}
+addEventListener('resize', resize);
+// Draw only when something changed (camera moved, layer toggled, model rebuilt).
+renderer.setAnimationLoop(now => {
+  if (tween) {
+    const k = Math.min(1, (now - tween.s) / 750), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    camera.position.lerpVectors(tween.p0, tween.p1, e); controls.target.lerpVectors(tween.t0, tween.t1, e);
+    if (k >= 1) tween = null;
+    dirty = true;
+  }
+  controls.update();
+  if (!dirty) return;
+  dirty = false;
+  renderer.render(scene, camera);
+  // lap call-outs only when zoomed in close enough for them not to pile up
+  const near = install.callouts && camera.position.distanceTo(controls.target) < 13;
+  G.newLaps.children.forEach(o => { if (o.isCSS2DObject || o.isGroup) o.visible = near; });
+  labelRenderer.render(scene, camera);
+});
+window.__roof = { P, stats: () => stats, frame: () => F, camera, controls, invalidate, goView, renderer, scene };
+</script>
+
+</body></html>
