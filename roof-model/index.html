@@ -1403,6 +1403,9 @@ function buildDims(F, out) {
     const l = label(`${k} · ${SEC_NAMES[k]}<span>${fm(L)} × ${fm(W)} ม.</span>`, 'seclabel', true);
     l.position.copy(mid); D.add(l);
   });
+  // total run of the back slope (B + C) along the near edge, beside the section labels
+  const sB = F.S.B, lenBC = P.lenB + P.lenC, xt = -W / 2 - 0.75;
+  D.add(dimLine(F.pt(sB, 0, xt, 0.3), F.pt(sB, lenBC, xt, 0.3), sB.n, `รวม ${fm(lenBC)} ม.  (${fm(P.lenB)} + ${fm(P.lenC)})`, 'dim acc'));
   // widths at both eaves
   const a1 = F.pt(F.S.A, P.lenA + 0.45, -W / 2, 0), a2 = F.pt(F.S.A, P.lenA + 0.45, W / 2, 0);
   D.add(dimLine(a1, a2, new V3(0, 0, 1), `กว้าง ${fm(W)} ม.`));
