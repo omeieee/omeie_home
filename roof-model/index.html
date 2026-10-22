@@ -223,7 +223,7 @@ tr.total td { font-weight: 600; border-bottom: 0; }
     <div class="more">
       <div class="eyebrow">ชั้นข้อมูล</div>
       <div class="layers">
-        <label><input type="checkbox" id="lyLaps" checked> ขอบแผ่นและส่วนทับซ้อน</label>
+        <label><input type="checkbox" id="lyLaps"> ขอบแผ่นและส่วนทับซ้อน</label>
         <label><input type="checkbox" id="lyWalls" checked> ผนังและพื้น</label>
         <label><input type="checkbox" id="lyNeighbours"> บ้านข้างเคียง</label>
         <label><input type="checkbox" id="lyStructure" checked> จันทันและแป</label>
@@ -490,11 +490,12 @@ const HOUSE_MATS = Object.values(M).filter(m => !OLD_MATS.includes(m) && !NEW_MA
 /* ------------------------------ roof colour ------------------------------ */
 const COLORS = [
   ['น้ำตาล', '#6e3f27'], ['แดงอิฐ', '#8e2f24'], ['ส้มดินเผา', '#b0532f'], ['เขียวเข้ม', '#3f5e3b'],
-  ['น้ำเงินกรมท่า', '#2c4a74'], ['เทาหินชนวน', '#6f767c'], ['เงินซิงค์', '#b9bec2'], ['ครีม', '#e4dccb'],
+  ['น้ำเงินกรมท่า', '#2c4a74'], ['เทาหินชนวน', '#6f767c'], ['เงินซิงค์', '#b9bec2'], ['ครีม', '#e4dccb'], ['เทาอ่อน', '#a8a8a6'],
 ];
 // Black and near-black are not allowed: every channel below ~28 % reads as black on a roof.
 const tooDark = hex => { const c = new THREE.Color(hex); return Math.max(c.r, c.g, c.b) < 0.075; }; // linear ≈ 0.30 sRGB
-const roof = { hex: COLORS[0][1], name: COLORS[0][0] };
+const DEFAULT_COLOR = COLORS[8];  // opening colour: light grey (brown stays the colour in the supplier quote)
+const roof = { hex: DEFAULT_COLOR[1], name: DEFAULT_COLOR[0] };
 try { const s = JSON.parse(localStorage.getItem('roofColor') || 'null'); if (s && /^#[0-9a-f]{6}$/i.test(s.hex) && !tooDark(s.hex)) Object.assign(roof, s); } catch (e) {}
 const presetName = COLORS.find(c => c[1] === roof.hex); if (presetName) roof.name = presetName[0];
 const sheetLight = () => { const c = new THREE.Color(roof.hex); return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b > 0.3; };
@@ -1779,7 +1780,7 @@ async function loadScan() {
 
 /* ------------------------------ camera views ------------------------------ */
 const VIEWS = {
-  iso: [new V3(16, 21, 12.5), new V3(0, 5.0, 1.5)],
+  iso: [new V3(-7.3, 16.8, 13.5), new V3(0, 6.0, 4.0)],  // opening view: roof seen from the front-left, ridge running up-left
   top: [new V3(0.01, 34, 2.6), new V3(0, 3, 2.6)],
   front: [new V3(2.5, 6.5, 30), new V3(0, 4.2, 2.6)],
   back: [new V3(-4, 10, -24), new V3(0, 3.6, 0)],
@@ -1898,7 +1899,9 @@ document.querySelectorAll('.tabs [role="tab"]').forEach(b => b.addEventListener(
 $('#rightToggle').addEventListener('click', () => { const c = $('#right').classList.toggle('collapsed'); $('#rightToggle').textContent = c ? 'แสดง' : 'ซ่อน'; $('#rightToggle').setAttribute('aria-expanded', String(!c)); });
 const setLeft = c => { $('#left').classList.toggle('collapsed', c); $('#leftToggle').textContent = c ? 'ตัวเลือก' : 'ซ่อน'; $('#leftToggle').setAttribute('aria-expanded', String(!c)); };
 $('#leftToggle').addEventListener('click', () => setLeft(!$('#left').classList.contains('collapsed')));
-if (innerWidth <= 1100) setLeft(true);
+// opening view: both side panels folded away so the 3D roof fills the screen
+setLeft(true);
+$('#right').classList.add('collapsed'); $('#rightToggle').textContent = 'แสดง'; $('#rightToggle').setAttribute('aria-expanded', 'false');
 $('#btnMeasure').addEventListener('click', () => {
   state.measuring = !state.measuring;
   $('#btnMeasure').setAttribute('aria-pressed', String(state.measuring));
